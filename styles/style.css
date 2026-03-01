@@ -1,0 +1,41 @@
+body{
+    overflow: hidden;
+}
+.wrapper-full {
+    min-height: 100%;
+    width: 100%;
+    background-color: black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 60px 0 60px 0;
+}
+.text-center{
+    text-align: center;
+}
+.main-title {
+    font-size: small;
+    font-weight: bolder;
+    padding-bottom: 7px;
+    color: rgb(184, 184, 184);
+}
+.main-title > span{
+    color: #e2c47a;
+}
+.main-subtitle {
+    width: 100%;
+    margin: 10px auto;
+    margin-bottom: 20px;
+    font-size: 3rem;
+    color: rgb(205, 205, 205);
+}
+.main-subtitle > span{
+    color: #e2c47a;
+    font-style: italic;
+}
+.sub-main-subtitle{
+    color: rgb(170, 154, 124); 
+    width: 100%; 
+    margin-top: 0;
+}

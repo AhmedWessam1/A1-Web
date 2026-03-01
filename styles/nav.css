@@ -1,0 +1,79 @@
+html,body{
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+.nav{
+    background-color: black;
+    padding: 5px 100px;
+    box-shadow: 0 0 12px 0 black;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.nav-col{
+    display: flex;
+    align-items: center;
+}
+.nav-col > h2 > a{
+    text-decoration: none;
+    color: #e2c47a;
+}
+.nav-col > h2 > a > span{
+    text-decoration: none;
+    color: gray;
+    font-size: medium;
+    font-style: italic;
+}
+.nav-img{
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    box-shadow: 0 0 5px 0 black;
+    border: 1px solid transparent;
+}
+.nav-list{
+    list-style: none;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
+.nav-item{
+    display: inline-block;
+    margin-right: 12px;
+    padding-left: 20px;
+}
+.nav-item > a{
+    text-decoration: none;
+    color: rgb(184, 184, 184);
+    position: relative;
+    padding-bottom: 7px;
+}
+.nav-item > a::after{
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0;
+    height: 3px;
+    background: #e2c47a;
+}
+.nav-item > a:hover{
+    color: white;
+}
+.nav-item > a:hover::after{
+    animation-name: borderbottom;
+    animation-duration: 0.5s;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+}
+@keyframes borderbottom{
+    from {
+        width: 0;
+    }
+    to {
+        width: 100%;
+    }
+}

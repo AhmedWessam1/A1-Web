@@ -1,0 +1,74 @@
+.wrapper-full {
+    min-height: 100vh;
+    width: 100%;
+    background: linear-gradient(135deg, #232526, #414345);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 0;
+}
+.wrapper {
+    background: rgba(34, 34, 34, 0.97);
+    width: 420px;
+    height: 100%;
+    box-shadow: 0 4px 24px 0 #e2c47a33;
+    border-radius: 16px;
+    padding: 32px 24px;
+}
+.text-center{
+    text-align: center;
+}
+.title{
+    color: #e2c47a;
+    font-style: italic;
+    font-size: 2.5rem;
+}
+.text-color-white{
+    color: white;
+    font-weight: bold;
+}
+.mt-3px{
+    margin-top: 3px;
+}
+.input{
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 8px 10px;
+    margin-top: 3px;
+    width: 80%;
+    font-size: 1rem;
+    background: #222;
+    color: #fff;
+}
+.input:focus{
+    border: 1.5px solid #e2c47a;
+    outline: none;
+    box-shadow: 0 0 4px #e2c47a55;
+}
+.submit{
+    width: 85%;
+    height: 38px;
+    border-radius: 6px;
+    border: none;
+    background-color: #e2c47a;
+    color: #232526;
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-top: 5px;
+    cursor: pointer;
+}
+.submit:hover{
+    background-color: #ffe6a7;
+}
+.href{
+    color: #e2c47a;
+    text-decoration: underline;
+}
+.href:hover{
+    color: #ffe6a7;
+}
+/* Add a little spacing between form fields */
+form > div{
+    margin-bottom: 12px;
+}

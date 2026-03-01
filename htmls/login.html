@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../styles/nav.css">
+    <link rel="stylesheet" href="../styles/signup-login.css">
+    <title>Bookify Login</title>
+</head>
+<body>
+    <div class="nav">
+        <div class="nav-col">
+            <h2><a href="home.html">Bookify <span>library</span></a></h2>
+        </div>
+        <div class="nav-col">
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="sign-up.html">Sign Up</a>
+                </li>
+                <li class="nav-item">
+                    <a href="login.html">Login</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="wrapper-full">
+        <div class="wrapper">
+            <div class="text-center">
+                <h1 class="title">Login</h1>
+            </div>
+            <div class="text-center">
+                <form action="home.html" method="post">
+                    <div>
+                        <label for="username" class=" text-color-white">Username</label>
+                        <div class="mt-3px">
+                            <input type="text" name="username" id="username" class="input"
+                            required>
+                        </div>
+                    </div>
+                    <br>
+                    <div>
+                        <label for="email" class=" text-color-white">Email</label>
+                        <div class="mt-3px">
+                            <input type="email" name="email" id="email" class="input"
+                            required>
+                        </div>
+                    </div>
+                    <br>
+                    <div>
+                        <label for="password" class=" text-color-white">Password</label>
+                        <div class="mt-3px">
+                            <input type="password" name="password" id="password" class="input"
+                            minlength="3" maxlength="20" required>
+                        </div>
+                    </div>
+                    <br>
+                    <div  class="text-color-white">
+                        <label for="gender" class="text-color-white">Type</label>
+                        <input type="radio" name="gender" id="gender" required> user
+                        <input type="radio" name="gender" id="gender"> admin
+                    </div>
+                    <br>
+                    <div>
+                        <button type="submit" class="submit">Login</button>
+                    </div>
+                    <div>
+                        <p class="text-color-white">Don't have an account ?
+                            <a href="sign-up.html" class="href">Create Account</a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
