@@ -68,7 +68,6 @@
 .href:hover{
     color: #ffe6a7;
 }
-/* Add a little spacing between form fields */
 form > div{
     margin-bottom: 12px;
 }
