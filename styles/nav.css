@@ -51,29 +51,6 @@ html,body{
     position: relative;
     padding-bottom: 7px;
 }
-.nav-item > a::after{
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 0;
-    height: 3px;
-    background: #e2c47a;
-}
 .nav-item > a:hover{
     color: white;
-}
-.nav-item > a:hover::after{
-    animation-name: borderbottom;
-    animation-duration: 0.5s;
-    animation-timing-function: linear;
-    animation-fill-mode: forwards;
-}
-@keyframes borderbottom{
-    from {
-        width: 0;
-    }
-    to {
-        width: 100%;
-    }
 }

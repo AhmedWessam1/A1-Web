@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../styles/nav.css">
     <link rel="stylesheet" href="../styles/signup-login.css">
+    <script src="../scripts/app.js"></script>
     <title>Bookify Login</title>
 </head>
 <body>
@@ -30,7 +31,7 @@
                 <h1 class="title">Login</h1>
             </div>
             <div class="text-center">
-                <form action="user_dashboard.html" method="post">
+                <form id="loginForm" method="post" onsubmit="return chooseLoginDashboard()">
                     <div>
                         <label for="username" class=" text-color-white">Username</label>
                         <div class="mt-3px">
@@ -57,8 +58,8 @@
                     <br>
                     <div  class="text-color-white">
                         <label for="gender" class="text-color-white">Type</label>
-                        <input type="radio" name="gender" id="gender" required> user
-                        <input type="radio" name="gender" id="gender"> admin
+                        <input type="radio" name="radioButton" id="user" value="user" required> <label for="user">user</label>
+                        <input type="radio" name="radioButton" id="admin" value="admin"> <label for="admin">admin</label>
                     </div>
                     <br>
                     <div>

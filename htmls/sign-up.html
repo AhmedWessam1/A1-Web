@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../styles/nav.css">
     <link rel="stylesheet" href="../styles/signup-login.css">
+    <script src="../scripts/app.js"></script>
     <title>Bookify SignUp</title>
 </head>
 <body>
@@ -30,7 +31,7 @@
                 <h1 class="title">Create Account</h1>
             </div>
             <div class="text-center">
-                <form action="user_dashboard.html" method="post">
+                <form id="signupForm" method="post" onsubmit="return chooseSignUpDashboard()">
                     <div>
                         <label for="username" class=" text-color-white">Username</label>
                         <div class="mt-3px">
@@ -61,12 +62,14 @@
                             <input type="password" name="Confirm-Password" id="Confirm-Password" class="input"
                             minlength="3" maxlength="20" required>
                         </div>
+                        <br>
+                        <label id="MatchPasswordlabel" style="color: rgb(234, 0, 0); font-weight: bold;"></label>
                     </div>
                     <br>
                     <div class="text-color-white">
                         <label class="text-color-white">Type</label>
-                        <input type="radio" name="type" id="user" value="user" required> <label for="user">user</label>
-                        <input type="radio" name="type" id="admin" value="admin"> <label for="admin">admin</label>
+                        <input type="radio" name="radioButton" id="user" value="user" required> <label for="user">user</label>
+                        <input type="radio" name="radioButton" id="admin" value="admin"> <label for="admin">admin</label>
                     </div>
                     <br>
                     <div>
