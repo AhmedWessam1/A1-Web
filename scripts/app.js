@@ -67,11 +67,12 @@ function logout() {
     }
 }
 
-function homeNavbarForUser() {
+function homeNavbarAndFooterForUser() {
     const navList = document.querySelector(".nav-list");
+    const fotterList = document.querySelector(".footer-list");
     const role = localStorage.getItem("Role");
 
-    if (!navList || !role) {
+    if (!navList || !fotterList || !role) {
         return;
     }
 
@@ -82,6 +83,12 @@ function homeNavbarForUser() {
         <li class="nav-item"><a href="my_books.html">My Borrowed Books</a></li>
         <li class="nav-item"><a href="login.html" onclick="logout()">Logout</a></li>
         `;
+        fotterList.innerHTML = `
+        <li class="footer-item"><a href="user_dashboard.html">Dashboard</a></li>
+        <li class="footer-item"><a href="books.html">View Books</a></li>
+        <li class="footer-item"><a href="my_books.html">My Borrowed Books</a></li>
+        <li class="footer-item"><a href="login.html" onclick="logout()">Logout</a></li>
+        `;
     }
     else if (role == "admin") {
         navList.innerHTML = `
@@ -89,6 +96,12 @@ function homeNavbarForUser() {
         <li class="nav-item"><a href="add_book.html">Add Book</a></li>
         <li class="nav-item"><a href="books.html">View Books</a></li>
         <li class="nav-item"><a href="login.html" onclick="logout()">Logout</a></li>
+        `;
+        fotterList.innerHTML = `
+        <li class="footer-item"><a href="admin_dashboard.html">Dashboard</a></li>
+        <li class="footer-item"><a href="add_book.html">Add Book</a></li>
+        <li class="footer-item"><a href="books.html">View Books</a></li>
+        <li class="footer-item"><a href="login.html" onclick="logout()">Logout</a></li>
         `;
     }
 }
@@ -100,6 +113,6 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
     else {
-        homeNavbarForUser();
+        homeNavbarAndFooterForUser();
     }
 });
