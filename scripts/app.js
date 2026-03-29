@@ -285,3 +285,77 @@ document.addEventListener("DOMContentLoaded", function () {
         homeNavbarForUser();
     }
 });
+
+function searchBooks(event) {
+    event.preventDefault();
+ 
+    const query = document.getElementById("searchInput").value.trim().toLowerCase();
+    const container = document.getElementById("booksContainer");
+ 
+    if (!container) return;
+ 
+    if (!query) {
+        displayBooks();
+        return;
+    }
+ 
+    let books = JSON.parse(localStorage.getItem("books")) || [];
+ 
+    const filtered = books.filter(book =>
+        book.name.toLowerCase().includes(query) ||
+        book.author.toLowerCase().includes(query)
+    );
+ 
+    container.innerHTML = "";
+ 
+    if (filtered.length === 0) {
+        container.innerHTML = `<p style="color:white; text-align:center; grid-column:1/-1;">No books found.</p>`;
+        return;
+    }
+ 
+    filtered.forEach(book => {
+        const allBooks = JSON.parse(localStorage.getItem("books")) || [];
+        const index = allBooks.findIndex(b => b.id === book.id);
+ 
+        container.innerHTML += `
+        <div class="book-card">
+            <h3>${book.name}</h3>
+            <p>${book.author}</p>
+            <p>${book.category}</p>
+            <span class="badge ${book.status === "available" ? "available" : "not-available"}">
+                ${book.status}
+            </span>
+            <button class="details-btn" onclick="showDetails(${index})">
+                View Details
+            </button>
+        </div>
+        `;
+    });
+}
+ 
+function clearSearch() {
+    const input = document.getElementById("searchInput");
+    if (input) input.value = "";
+    displayBooks();
+}
+ 
+
+ 
+document.addEventListener("DOMContentLoaded", function () {
+    const path = window.location.pathname;
+ 
+    if (path.endsWith("login.html") || path.endsWith("sign-up.html")) {
+        localStorage.removeItem("Role");
+        return;
+    }
+ 
+    homeNavbarAndFooterForUser();
+ 
+    if (path.includes("books.html")) {
+        displayBooks();
+    }
+ 
+    if (path.includes("home.html")) {
+        displayHomeBooks();
+    }
+});
