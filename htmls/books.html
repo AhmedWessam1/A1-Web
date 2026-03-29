@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="../styles/nav.css">
     <link rel="stylesheet" href="../styles/style.css">
+    <link rel="stylesheet" href="../styles/signup-login.css">
     <script src="../scripts/app.js" defer></script>
     <title>Books</title>
 </head>
@@ -24,47 +25,65 @@
     </div>
 </div>
 
-
 <div class="wrapper-full">
 
-    <div class="books-page" >
+    <div class="books-page">
         <h1>Our Collection</h1>
 
-        <div class="books-grid" id="booksContainer">
+<div class="text-center">
 
-        </div>
+    <h2 class="title" style="margin-bottom:15px;">Search Books</h2>
+
+    <form onsubmit="searchBooks(event)">
+    <div>
+        <input type="text" id="searchInput" style="width: 60%;" class="input" placeholder="Enter book title or author" required>
     </div>
-    <footer class="home-footer">
-            <div class="footer-col">
-                <h3>Bookify Library</h3>
-                <p>Your digital reading corner for timeless classics and modern favorites.</p>
-            </div>
-            <div class="footer-col">
-                <h4>Quick Links</h4>
-                <ul class="footer-list">
-                    <li class="footer-item">
-                        <a href="home.html">Home</a>
-                    </li>
-                    <li class="footer-item">
-                        <a href="sign-up.html">Sign Up</a>
-                    </li>
-                    <li class="footer-item">
-                        <a href="login.html">Login</a>
-                    </li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h4>Library Hours</h4>
-                <p>Sun - Thu: 11:00 AM - 9:00 PM</p>
-                <p>Fri - Sat: 2:00 AM - 9:00 PM</p>
-            </div>
-            <div class="footer-col">
-                <h4>Contact</h4>
-                <p>Email: support@bookify.com</p>
-                <p>Phone: 012345</p>
-            </div>
-        </footer>
+
+    <div>
+        <button type="submit" style="width: 80px; height: 30px;" class="submit">Search</button>
+        <button type="button" onclick="clearSearch()" style="width: 80px; height: 30px;" class="submit">Clear</button>
+    </div>
+</form>
 </div>
+    
+
+
+
+        <div class="books-grid" id="booksContainer"></div>
+    </div>
+
+    <footer class="home-footer">
+        <div class="footer-col">
+            <h3>Bookify Library</h3>
+            <p>Your digital reading corner for timeless classics and modern favorites.</p>
+        </div>
+        <div class="footer-col">
+            <h4>Quick Links</h4>
+            <ul class="footer-list">
+                <li class="footer-item">
+                    <a href="home.html">Home</a>
+                </li>
+                <li class="footer-item">
+                    <a href="sign-up.html">Sign Up</a>
+                </li>
+                <li class="footer-item">
+                    <a href="login.html">Login</a>
+                </li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h4>Library Hours</h4>
+            <p>Sun - Thu: 11:00 AM - 9:00 PM</p>
+            <p>Fri - Sat: 2:00 AM - 9:00 PM</p>
+        </div>
+        <div class="footer-col">
+            <h4>Contact</h4>
+            <p>Email: support@bookify.com</p>
+            <p>Phone: 012345</p>
+        </div>
+    </footer>
+</div>
+
 <div id="bookModal" class="modal">
     <div class="modal-content">
         <span class="close-btn" onclick="closeModal()">&times;</span>
@@ -72,7 +91,6 @@
         <div id="modalBody"></div>
     </div>
 </div>
-
 
 </body>
 </html>
