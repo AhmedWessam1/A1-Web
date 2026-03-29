@@ -116,3 +116,128 @@ document.addEventListener("DOMContentLoaded", function () {
         homeNavbarAndFooterForUser();
     }
 });
+
+
+function displayBooks() {
+    const container = document.getElementById("booksContainer");
+
+    if (!container) return;
+
+    let books = JSON.parse(localStorage.getItem("books")) || [];
+
+    container.innerHTML = "";
+
+    books.forEach((book, index) => {
+        container.innerHTML += `
+        <div class="book-card">
+            <h3>${book.name}</h3>
+            <p>${book.author}</p>
+            <p>${book.category}</p>
+            <span class="badge ${book.status === "available" ? "available" : "not-available"}">
+                ${book.status}
+            </span>
+            <button class="details-btn" onclick="showDetails(${index})">
+                View Details
+            </button>
+        </div>
+        `;
+    });
+}
+
+function showDetails(index) {
+    let books = JSON.parse(localStorage.getItem("books"));
+    const book = books[index];
+
+    const modalBody = document.getElementById("modalBody");
+
+    modalBody.innerHTML = `
+        <p><strong>ID:</strong> ${book.id}</p>
+        <p><strong>Name:</strong> ${book.name}</p>
+        <p><strong>Author:</strong> ${book.author}</p>
+        <p><strong>Category:</strong> ${book.category}</p>
+        <p><strong>Description:</strong> ${book.description}</p>
+        <p><strong>Status:</strong> ${book.status}</p>
+    `;
+
+    document.getElementById("bookModal").style.display = "block";
+}
+
+function closeModal() {
+    document.getElementById("bookModal").style.display = "none";
+}
+
+function addBook(event) {
+    event.preventDefault();
+
+    let books = JSON.parse(localStorage.getItem("books")) || [];
+
+    let bookName = document.getElementById("book-name").value;
+    let author = document.getElementById("author").value;
+    let category = document.getElementById("category").value;
+    let description = document.getElementById("description").value;
+    let newId = books.length > 0 ? Number(books[books.length - 1].id) + 1 : 101;
+
+    let newBook = {
+        id: newId,
+        name: bookName,
+        author: author,
+        category: category,
+        description: description,
+        status: "available"
+    };
+
+    books.push(newBook);
+
+    localStorage.setItem("books", JSON.stringify(books));
+
+    alert("Book Added Successfully ✅");
+
+    window.location.href = "books.html";
+}
+
+function displayHomeBooks() {
+    const container = document.getElementById("homeBooksContainer");
+
+    if (!container) return;
+
+    let books = JSON.parse(localStorage.getItem("books")) || [];
+
+    let latestBooks = books.slice(-3);
+
+    container.innerHTML = "";
+
+    latestBooks.forEach(book => {
+        container.innerHTML += `
+        <div class="book-card">
+            <h3>${book.name}</h3>
+            <p>${book.author}</p>
+        </div>
+        `;
+    });
+}
+
+window.onclick = function(event) {
+    let modal = document.getElementById("bookModal");
+    if (event.target === modal) {
+        modal.style.display = "none";
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    const path = window.location.pathname;
+
+    if (path.includes("books.html")) {
+        displayBooks();
+    }
+
+    if (path.includes("home.html")) {
+        displayHomeBooks();
+    }
+
+    if (path.endsWith("login.html") || path.endsWith("sign-up.html")) {
+        localStorage.removeItem("Role");
+        return;
+    } else {
+        homeNavbarForUser();
+    }
+});
