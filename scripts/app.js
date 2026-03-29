@@ -21,10 +21,6 @@ function chooseSignUpDashboard() {
         return false;
     }
 
-    if (!signupForm) {
-        return false;
-    }
-
     if (userRadio.checked) {
         localStorage.setItem("Role", "user");
         window.location.href = "home.html";
@@ -39,10 +35,6 @@ function chooseSignUpDashboard() {
 function chooseLoginDashboard() {
     const userRadio = document.getElementById("user");
     const loginForm = document.getElementById("loginForm");
-
-    if (!loginForm) {
-        return false;
-    }
 
     if (userRadio.checked) {
         localStorage.setItem("Role", "user");
@@ -59,12 +51,11 @@ function logout() {
     localStorage.removeItem("Role");
     
     const navList = document.querySelector(".nav-list");
-    if (navList) {
-        navList.innerHTML = `
-        <li class="nav-item"><a href="sign-up.html">Sign Up</a></li>
-        <li class="nav-item"><a href="login.html">Login</a></li>
-        `;
-    }
+    
+    navList.innerHTML = `
+    <li class="nav-item"><a href="sign-up.html">Sign Up</a></li>
+    <li class="nav-item"><a href="login.html">Login</a></li>
+    `;
 }
 
 function homeNavbarAndFooterForUser() {
@@ -72,19 +63,13 @@ function homeNavbarAndFooterForUser() {
     const fotterList = document.querySelector(".footer-list");
     const role = localStorage.getItem("Role");
 
-    if (!navList || !fotterList || !role) {
-        return;
-    }
-
     if (role == "user") {
         navList.innerHTML = `
-        <li class="nav-item"><a href="user_dashboard.html">Dashboard</a></li>
         <li class="nav-item"><a href="books.html">View Books</a></li>
         <li class="nav-item"><a href="my_books.html">My Borrowed Books</a></li>
         <li class="nav-item"><a href="login.html" onclick="logout()">Logout</a></li>
         `;
         fotterList.innerHTML = `
-        <li class="footer-item"><a href="user_dashboard.html">Dashboard</a></li>
         <li class="footer-item"><a href="books.html">View Books</a></li>
         <li class="footer-item"><a href="my_books.html">My Borrowed Books</a></li>
         <li class="footer-item"><a href="login.html" onclick="logout()">Logout</a></li>
@@ -92,13 +77,11 @@ function homeNavbarAndFooterForUser() {
     }
     else if (role == "admin") {
         navList.innerHTML = `
-        <li class="nav-item"><a href="admin_dashboard.html">Dashboard</a></li>
         <li class="nav-item"><a href="add_book.html">Add Book</a></li>
         <li class="nav-item"><a href="books.html">View Books</a></li>
         <li class="nav-item"><a href="login.html" onclick="logout()">Logout</a></li>
         `;
         fotterList.innerHTML = `
-        <li class="footer-item"><a href="admin_dashboard.html">Dashboard</a></li>
         <li class="footer-item"><a href="add_book.html">Add Book</a></li>
         <li class="footer-item"><a href="books.html">View Books</a></li>
         <li class="footer-item"><a href="login.html" onclick="logout()">Logout</a></li>
