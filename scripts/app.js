@@ -120,6 +120,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function displayBooks() {
     const container = document.getElementById("booksContainer");
+    const role = localStorage.getItem("Role");
 
     if (!container) return;
 
@@ -128,20 +129,55 @@ function displayBooks() {
     container.innerHTML = "";
 
     books.forEach((book, index) => {
-        container.innerHTML += `
-        <div class="book-card">
-            <h3>${book.name}</h3>
-            <p>${book.author}</p>
-            <p>${book.category}</p>
-            <span class="badge ${book.status === "available" ? "available" : "not-available"}">
-                ${book.status}
-            </span>
-            <button class="details-btn" onclick="showDetails(${index})">
-                View Details
-            </button>
-        </div>
-        `;
+        if (role == "user") {
+            container.innerHTML += `
+            <div class="book-card">
+                <h3>${book.name}</h3>
+                <p>${book.author}</p>
+                <p>${book.category}</p>
+                <span class="badge ${book.status === "available" ? "available" : "not-available"}">
+                    ${book.status}
+                </span>
+                <button class="details-btn" onclick="showDetails(${index})">
+                    View Details
+                </button>
+            </div>
+            `;
+        }
+        else if (role == "admin") {
+            container.innerHTML += `
+            <div class="book-card">
+                <h3>${book.name}</h3>
+                <p>${book.author}</p>
+                <p>${book.category}</p>
+                <span class="badge ${book.status === "available" ? "available" : "not-available"}">
+                    ${book.status}
+                </span>
+                <button class="details-btn" onclick="showDetails(${index})">
+                    View Details
+                </button>
+                <button class="details-btn" onclick="deleteBook(${index})">
+                    Delete
+                </button>
+            </div>
+            `;
+        }
     });
+}
+
+function deleteBook(index) {
+    let books = JSON.parse(localStorage.getItem("books")) || [];
+
+    const confirmed = confirm(`Are you sure you want to delete "${books[index].name}"?`);
+    if (!confirmed) {
+        return;
+    }
+
+    books.splice(index, 1);
+    localStorage.setItem("books", JSON.stringify(books));
+
+    alert("Book deleted successfully.");
+    displayBooks();
 }
 
 function showDetails(index) {
