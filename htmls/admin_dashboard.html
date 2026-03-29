@@ -4,27 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>admin dashboard</title>
+     <link rel="stylesheet" href="../styles/nav.css">
+    <link rel="stylesheet" href="../styles/signup-login.css">
+    <link rel="stylesheet" href="../styles/style.css">
+
 </head>
 <body>
-    <nav>
-        <a href="home.html">Bookify</a>
-        <div class="logos">
-            <ul>
-
-            <li class="nav-item"><a href="admin_dashboard.html">Dashboard</a></li>
-            <li class="nav-item"><a href="add_book.html">Add Book</a></li>
-            <li class="nav-item"><a href="books.html">View Books</a></li>
+    <nav class="nav">
+        <div class="nav-col">
+        <h2>
+        <a href="../htmls/home.html">Bookify</a>
+        </h2>
+        </div>
+        <div class="nav-col">
+            <ul class="nav-list">
+            <li class="nav-item"><a href="index.html">Dashboard</a></li>
+            <li class="nav-item"><a href="add_book.html">add book</a></li>
+            <li class="nav-item"><a href="books.html">view books</a></li>
             <li class="nav-item"><a href="login.html">Logout</a></li>
             </ul>
         </div>
     </nav>
-    
-     <h2  id="welcome">welcome Admin</h2>
+    <div class="wrapper-full">
+        <div class="text-center">
+     <p  class="main-subtitle">welcome Admin</p>
+</div>
 
-     <h2 class="main-subtitle" style="margin-top:15px;" >Quick action</h2>
-     <div class="buttons">
+     <h2 class="main-subtitle"  style=" padding-left: 410px;" >Quick action</h2>
+     <div style=" padding-left: 30px;" class="buttons">
      <button type="submit" class="submit">add Book</button>
       <button type="submit" class="submit">Mabage Book</button>
         </div>
+        </div>
+
 </body>
 </html>
