@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book Details</title>
-    <link rel="stylesheet" href="../styles//nav.css">
-    <link rel="stylesheet" href="../styles/style.css">
+    <link rel="stylesheet" href="../styles/nav.css">
+    <link rel="stylesheet" href="../styles/book-details.css">
 </head>
 <body>
 
-    <div class="nav">
+   <div class="nav">
         <div class="nav-col">
             <h2><a href="home.html">Bookify <span>library</span></a></h2>
         </div>
@@ -25,41 +25,110 @@
         </div>
     </div>
 
-    <h1>The Subtle Art of Not Giving a F*ck</h1>
+    <main class="page-content">
+        <div class="book-card">
 
-    <h3>Description of the Book:</h3>
-    <p>
-        This book offers a counterintuitive take on personal growth and happiness. 
-        Instead of promoting relentless positivity, Mark Manson argues that life’s struggles and limitations are 
-        inevitable and meaningful. 
-        He suggests that you should choose carefully what you “care about” — focusing only on the values and problems 
-        that truly matter to you — rather than trying to avoid discomfort or chase superficial success. 
-        Through a mix of personal anecdotes, humor, and practical insights, 
-        the book challenges typical self-help advice and encourages readers to embrace responsibility, 
-        accept life’s difficulties, and live with clarity about what’s truly important.
-    </p>
+            <div class="card-top">
 
-    <h3>Category:</h3>
+                <div class="cover-col">
+                    <img class="book-cover" src="./Images/9780062641540.jpg" alt="The Subtle Art of Not Giving a F*ck">
+                </div>
 
-    <p>
-        <b>Nonfiction</b> — specifically self-help / personal development. 
-        The book is often categorized under motivational and self-improvement genres.
-    </p>
+                <div class="details-col">
 
-    <h3>Author:</h3>
+                    <h1 class="book-title">The Subtle Art of Not Giving a F*ck</h1>
 
-    <p>
-        <b>Mark Manson</b> — an American author, blogger, and personal-development writer known for his blunt, 
-        no-nonsense take on self-help and life philosophy.
-    </p>
+                    <section class="info-section" id="category">
+                        <h3 class="info-label">Category</h3>
+                        <p class="info-text">
+                            <strong>Nonfiction</strong> — Self-Help / Personal Development.
+                            Focuses on mindset, values, and realistic approaches to happiness and success.
+                        </p>
+                    </section>
 
-    <span>
-        Available
-    </span>
+                    <section class="info-section" id="author">
+                        <h3 class="info-label">Author</h3>
+                        <p class="info-text">
+                            <strong>Mark Manson</strong> — an American author, blogger, and personal-development
+                            writer known for his direct and unconventional advice on life and success.
+                        </p>
+                    </section>
 
-    <br>
+                    <section class="info-section" id="published">
+                        <h3 class="info-label">Published</h3>
+                        <p class="info-text">
+                            First published in <strong>2016</strong>.
+                        </p>
+                    </section>
 
-    <input type="button" name="Borrow_Button" id="Borrow" value="Borrow">
-    
+                    <div class="book-footer">
+                        <span class="status-badge">Available</span>
+                        <button class="borrow-btn" type="button">Borrow</button>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <section class="info-section" id="description">
+                <h3 class="info-label">Description</h3>
+                <p class="info-text">
+                    <strong>The Subtle Art of Not Giving a F*ck</strong> presents a counterintuitive approach
+                    to living a better life. Instead of encouraging constant positivity, the book argues
+                    that accepting struggles and limitations is the key to growth.
+                    <br><br>
+                    It teaches readers to focus only on what truly matters, stop wasting energy on trivial
+                    concerns, and take responsibility for their choices. Through real-life stories and
+                    practical advice, the author emphasizes honesty, resilience, and meaningful values.
+                </p>
+            </section>
+
+            <section class="info-section" id="key-lessons">
+                <h3 class="info-label">Key Lessons</h3>
+                <ul class="info-text">
+                    <li>Not everything deserves your attention — choose wisely.</li>
+                    <li>Problems are a natural part of life and growth.</li>
+                    <li>Take responsibility for your actions and decisions.</li>
+                    <li>Failure is necessary to improve and succeed.</li>
+                    <li>Happiness comes from solving meaningful problems.</li>
+                </ul>
+            </section>
+
+        </div>
+    </main>
+
+    <footer class="home-footer">
+        <div class="footer-col">
+            <h3>Bookify Library</h3>
+            <p>Your digital reading corner for timeless classics and modern favorites.</p>
+        </div>
+        <div class="footer-col">
+            <h4>Quick Links</h4>
+            <ul class="footer-list">
+                <li class="footer-item">
+                    <a href="home.html">Home</a>
+                </li>
+                <li class="footer-item">
+                    <a href="sign-up.html">Sign Up</a>
+                </li>
+                <li class="footer-item">
+                    <a href="login.html">Login</a>
+                </li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h4>Library Hours</h4>
+            <p>Sun - Thu: 11:00 AM - 9:00 PM</p>
+            <p>Fri - Sat: 2:00 AM - 9:00 PM</p>
+        </div>
+        <div class="footer-col">
+            <h4>Contact</h4>
+            <p>Email: support@bookify.com</p>
+            <p>Phone: 012345</p>
+        </div>
+    </footer>
+
+
+    <script src="../scripts/app.js"></script>
 </body>
 </html>
