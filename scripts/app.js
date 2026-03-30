@@ -242,12 +242,8 @@ window.onclick = function(event) {
     }
 }
 
-function goToAddBooks() {
-    window.location.href = "add_book.html"
-}
-
-function goToEditBooks() {
-    window.location.href = "edit_book.html"
+function goToHome() {
+    window.location.href = "Home.html"
 }
 
 document.addEventListener("DOMContentLoaded", function () {
