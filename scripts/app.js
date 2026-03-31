@@ -52,10 +52,12 @@ function logout() {
     
     const navList = document.querySelector(".nav-list");
     
-    navList.innerHTML = `
-    <li class="nav-item"><a href="sign-up.html">Sign Up</a></li>
-    <li class="nav-item"><a href="login.html">Login</a></li>
-    `;
+    if (navList) {
+        navList.innerHTML = `
+        <li class="nav-item"><a href="sign-up.html">Sign Up</a></li>
+        <li class="nav-item"><a href="login.html">Login</a></li>
+        `;
+    }
 }
 
 function homeNavbarAndFooterForUser() {
@@ -64,42 +66,38 @@ function homeNavbarAndFooterForUser() {
     const role = localStorage.getItem("Role");
 
     if (role == "user") {
-        navList.innerHTML = `
-        <li class="nav-item"><a href="books.html">View Books</a></li>
-        <li class="nav-item"><a href="my_books.html">My Borrowed Books</a></li>
-        <li class="nav-item"><a href="login.html" onclick="logout()">Logout</a></li>
-        `;
-        fotterList.innerHTML = `
-        <li class="footer-item"><a href="books.html">View Books</a></li>
-        <li class="footer-item"><a href="my_books.html">My Borrowed Books</a></li>
-        <li class="footer-item"><a href="login.html" onclick="logout()">Logout</a></li>
-        `;
+        if (navList) {
+            navList.innerHTML = `
+            <li class="nav-item"><a href="books.html">View Books</a></li>
+            <li class="nav-item"><a href="my_books.html">My Borrowed Books</a></li>
+            <li class="nav-item"><a href="login.html" onclick="logout()">Logout</a></li>
+            `;
+        }
+        if (fotterList) {
+            fotterList.innerHTML = `
+            <li class="footer-item"><a href="books.html">View Books</a></li>
+            <li class="footer-item"><a href="my_books.html">My Borrowed Books</a></li>
+            <li class="footer-item"><a href="login.html" onclick="logout()">Logout</a></li>
+            `;
+        }
     }
     else if (role == "admin") {
-        navList.innerHTML = `
-        <li class="nav-item"><a href="add_book.html">Add Book</a></li>
-        <li class="nav-item"><a href="books.html">View Books</a></li>
-        <li class="nav-item"><a href="login.html" onclick="logout()">Logout</a></li>
-        `;
-        fotterList.innerHTML = `
-        <li class="footer-item"><a href="add_book.html">Add Book</a></li>
-        <li class="footer-item"><a href="books.html">View Books</a></li>
-        <li class="footer-item"><a href="login.html" onclick="logout()">Logout</a></li>
-        `;
+        if (navList) {
+            navList.innerHTML = `
+            <li class="nav-item"><a href="add_book.html">Add Book</a></li>
+            <li class="nav-item"><a href="books.html">View Books</a></li>
+            <li class="nav-item"><a href="login.html" onclick="logout()">Logout</a></li>
+            `;
+        }
+        if (fotterList) {
+            fotterList.innerHTML = `
+            <li class="footer-item"><a href="add_book.html">Add Book</a></li>
+            <li class="footer-item"><a href="books.html">View Books</a></li>
+            <li class="footer-item"><a href="login.html" onclick="logout()">Logout</a></li>
+            `;
+        }
     }
 }
-
-document.addEventListener("DOMContentLoaded", function () {
-    const path = window.location.pathname;
-    if (path.endsWith("login.html") || path.endsWith("sign-up.html")) {
-        localStorage.removeItem("Role");
-        return;
-    }
-    else {
-        homeNavbarAndFooterForUser();
-    }
-});
-
 
 function displayBooks() {
     const container = document.getElementById("booksContainer");
@@ -113,6 +111,7 @@ function displayBooks() {
 
     books.forEach((book, index) => {
         if (role == "user") {
+            const isBorrowed = book.status === "borrowed";
             container.innerHTML += `
             <div class="book-card">
                 <h3>${book.name}</h3>
@@ -123,6 +122,9 @@ function displayBooks() {
                 </span>
                 <button class="details-btn" onclick="showDetails(${index})">
                     View Details
+                </button>
+                <button class="borrow-from-books-btn" onclick="borrowBookFromBooks(${index})" ${book.status !== "available" ? "disabled" : ""}>
+                    ${isBorrowed ? "Borrowed" : "Borrow"}
                 </button>
             </div>
             `;
@@ -146,6 +148,42 @@ function displayBooks() {
             `;
         }
     });
+}
+
+function borrowBookFromBooks(index) {
+    let books = JSON.parse(localStorage.getItem("books")) || [];
+    const book = books[index];
+
+    if (book.status !== "available") {
+        alert("This book is not available for borrowing.");
+        return;
+    }
+
+    const confirmed = confirm(`Are you sure you want to borrow "${book.name}"?`);
+    if (!confirmed) return;
+
+    book.status = "borrowed";
+    books[index] = book;
+    localStorage.setItem("books", JSON.stringify(books));
+
+    let borrowedBooks = JSON.parse(localStorage.getItem("borrowedBooksList")) || [];
+    const alreadyBorrowed = borrowedBooks.some(b => b.id === book.id);
+    if (!alreadyBorrowed) {
+        borrowedBooks.push({
+            id: book.id,
+            name: book.name,
+            author: book.author,
+            category: book.category,
+            description: book.description,
+            borrowedDate: new Date().toISOString(),
+            dueDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
+            status: "borrowed"
+        });
+        localStorage.setItem("borrowedBooksList", JSON.stringify(borrowedBooks));
+    }
+
+    alert(`You have successfully borrowed "${book.name}". It is due in 14 days.`);
+    displayBooks();
 }
 
 function deleteBook(index) {
@@ -246,25 +284,6 @@ function goToHome() {
     window.location.href = "Home.html"
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-    const path = window.location.pathname;
-
-    if (path.includes("books.html")) {
-        displayBooks();
-    }
-
-    if (path.includes("home.html")) {
-        displayHomeBooks();
-    }
-
-    if (path.endsWith("login.html") || path.endsWith("sign-up.html")) {
-        localStorage.removeItem("Role");
-        return;
-    } else {
-        homeNavbarAndFooterForUser();
-    }
-});
-
 function searchBooks(event) {
     event.preventDefault();
  
@@ -307,6 +326,9 @@ function searchBooks(event) {
             <button class="details-btn" onclick="showDetails(${index})">
                 View Details
             </button>
+            <button class="borrow-from-books-btn" onclick="borrowBookFromBooks(${index})" ${book.status !== "available" ? "disabled" : ""}>
+                Borrow
+            </button>
         </div>
         `;
     });
@@ -317,305 +339,181 @@ function clearSearch() {
     if (input) input.value = "";
     displayBooks();
 }
- 
 
- 
-document.addEventListener("DOMContentLoaded", function () {
-    const path = window.location.pathname;
- 
-    if (path.endsWith("login.html") || path.endsWith("sign-up.html")) {
-        localStorage.removeItem("Role");
-        return;
+// BOOK DETAILS PAGE
+
+function borrowBookFromDetails(bookTitle, bookAuthor, bookId) {
+
+    let borrowedBooks = JSON.parse(localStorage.getItem("borrowedBooksList")) || [];
+    const alreadyBorrowed = borrowedBooks.some(b => b.id === bookId);
+    
+    if (alreadyBorrowed) {
+        alert("You have already borrowed this book!");
+        return false;
     }
- 
-    homeNavbarAndFooterForUser();
- 
-    if (path.includes("books.html")) {
-        displayBooks();
+    
+    let books = JSON.parse(localStorage.getItem("books")) || [];
+    const bookInMain = books.find(b => b.name === bookTitle);
+    
+    if (bookInMain && bookInMain.status === "borrowed") {
+        alert("This book is already borrowed by someone else!");
+        return false;
     }
- 
-    if (path.includes("home.html")) {
-        displayHomeBooks();
+    
+    const confirmed = confirm(`Are you sure you want to borrow "${bookTitle}"?`);
+    if (!confirmed) return false;
+    
+    if (bookInMain) {
+        bookInMain.status = "borrowed";
+        localStorage.setItem("books", JSON.stringify(books));
     }
-});
+    
+    borrowedBooks.push({
+        id: bookId,
+        name: bookTitle,
+        author: bookAuthor,
+        borrowedDate: new Date().toISOString(),
+        dueDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
+        status: "borrowed"
+    });
+    localStorage.setItem("borrowedBooksList", JSON.stringify(borrowedBooks));
+    
+    alert(`You have successfully borrowed "${bookTitle}". It is due in 14 days.`);
+    return true;
+}
 
-
-
-// Book Details Page
-
-function initializeBookDetailsPage() {
+function setupBookDetailsPage() {
     const borrowBtn = document.querySelector(".borrow-btn");
     const statusBadge = document.querySelector(".status-badge");
-
+    
     if (!borrowBtn) return;
-
-    const bookTitle = document.querySelector(".book-title")?.textContent.trim() || "this book";
-
-    const modal = document.createElement("div");
-    modal.id = "borrow-modal";
-    modal.innerHTML = `
-        <div class="modal-backdrop"></div>
-        <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-            <h2 class="modal-title" id="modal-title">Confirm Borrow</h2>
-            <p class="modal-msg">Are you sure you want to borrow <strong>${bookTitle}</strong>?</p>
-            <div class="modal-actions">
-                <button class="modal-btn modal-cancel" type="button">Cancel</button>
-                <button class="modal-btn modal-confirm" type="button">Yes, Borrow</button>
-            </div>
-        </div>
-    `;
-    document.body.appendChild(modal);
-
-
-    const style = document.createElement("style");
-    style.textContent = `
-        #borrow-modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-        #borrow-modal.open {
-            display: flex;
-        }
-        .modal-backdrop {
-            position: absolute;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.65);
-            backdrop-filter: blur(3px);
-            animation: fadeIn 0.2s ease;
-        }
-        .modal-box {
-            position: relative;
-            background: #242424;
-            border: 1px solid #444;
-            border-top: 3px solid #c9a84c;
-            border-radius: 14px;
-            padding: 36px 40px;
-            max-width: 420px;
-            width: 90%;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-            animation: slideUp 0.25s ease;
-            z-index: 1;
-        }
-        .modal-title {
-            font-family: Georgia, serif;
-            font-style: italic;
-            font-size: 1.4rem;
-            color: #c9a84c;
-            margin: 0 0 14px;
-        }
-        .modal-msg {
-            color: #c0c0c0;
-            font-size: 1rem;
-            line-height: 1.7;
-            margin: 0 0 28px;
-        }
-        .modal-msg strong {
-            color: #e8e8e8;
-        }
-        .modal-actions {
-            display: flex;
-            gap: 12px;
-            justify-content: flex-end;
-        }
-        .modal-btn {
-            padding: 10px 28px;
-            border-radius: 8px;
-            font-family: Georgia, serif;
-            font-size: 0.9rem;
-            font-weight: 700;
-            letter-spacing: 0.06em;
-            cursor: pointer;
-            border: none;
-            transition: background-color 0.2s, transform 0.15s;
-        }
-        .modal-cancel {
-            background: #3a3a3a;
-            color: #b0b0b0;
-            border: 1px solid #555;
-        }
-        .modal-cancel:hover {
-            background: #444;
-            color: #e0e0e0;
-        }
-        .modal-confirm {
-            background: #c9a84c;
-            color: #1a1a1a;
-            box-shadow: 0 4px 18px rgba(201,168,76,0.3);
-        }
-        .modal-confirm:hover {
-            background: #d4b96a;
-            transform: translateY(-1px);
-        }
-        .modal-confirm:active {
-            transform: translateY(0);
-        }
-        .status-badge.status-borrowed {
-            background-color: #3d2e10;
-            color: #e0a040;
-            border: 1px solid #66480a;
-        }
-        .borrow-btn:disabled {
-            background-color: #555;
-            color: #888;
-            cursor: not-allowed;
-            box-shadow: none;
-            transform: none;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to   { opacity: 1; }
-        }
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to   { opacity: 1; transform: translateY(0);    }
-        }
-    `;
-    document.head.appendChild(style);
-
-    borrowBtn.addEventListener("click", () => {
-        if (borrowBtn.disabled) return;
-        modal.classList.add("open");
-        modal.querySelector(".modal-confirm").focus();
-    });
-
-    modal.querySelector(".modal-cancel").addEventListener("click", closeBookDetailsModal);
-    modal.querySelector(".modal-backdrop").addEventListener("click", closeBookDetailsModal);
-
-    modal.querySelector(".modal-confirm").addEventListener("click", () => {
-        closeBookDetailsModal();
-        confirmBorrowForBook(statusBadge, borrowBtn);
-    });
-
-    document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && modal.classList.contains("open")) closeBookDetailsModal();
-    });
-
-    function closeBookDetailsModal() {
-        modal.classList.remove("open");
+    
+    const bookTitle = document.querySelector(".book-title")?.textContent.trim() || "";
+    let bookAuthor = "";
+    
+    const authorElement = document.querySelector("#author .info-text");
+    if (authorElement) {
+        const authorText = authorElement.textContent.trim();
+        const match = authorText.match(/—\s*(.*?)(?:\n|$)/);
+        bookAuthor = match ? match[1].trim() : authorText;
     }
+    
+    const bookId = bookTitle.replace(/\s+/g, "-").toLowerCase();
+    
+    let borrowedBooks = JSON.parse(localStorage.getItem("borrowedBooksList")) || [];
+    const isBorrowed = borrowedBooks.some(b => b.id === bookId);
+    
+    if (isBorrowed) {
 
-    restoreBookBorrowState(statusBadge, borrowBtn);
-}
-
-function confirmBorrowForBook(statusBadge, borrowBtn) {
-
-    statusBadge.textContent = "Borrowed";
-    statusBadge.className = "status-badge status-borrowed";
-
-    borrowBtn.disabled = true;
-    borrowBtn.textContent = "Borrowed";
-
-    const bookId = getBookIdFromPage();
-    if (bookId) {
-        const borrowed = JSON.parse(localStorage.getItem("borrowedBooks") || "{}");
-        borrowed[bookId] = "borrowed";
-        localStorage.setItem("borrowedBooks", JSON.stringify(borrowed));
-    }
-}
-
-function getBookIdFromPage() {
-    const filename = window.location.pathname.split("/").pop();
-    const idMap = {
-        "book_details.html": "book_details",
-        "book_details3.html": "book_details3",
-        "book_deatils2.html": "book_deatils2"
-    };
-    return idMap[filename] || filename?.replace(".html", "") || null;
-}
-
-function restoreBookBorrowState(statusBadge, borrowBtn) {
-    const bookId = getBookIdFromPage();
-    if (!bookId) return;
-    const borrowed = JSON.parse(localStorage.getItem("borrowedBooks") || "{}");
-    if (borrowed[bookId] === "borrowed") {
-        statusBadge.textContent = "Borrowed";
-        statusBadge.className = "status-badge status-borrowed";
         borrowBtn.disabled = true;
         borrowBtn.textContent = "Borrowed";
+        borrowBtn.style.backgroundColor = "#555";
+        borrowBtn.style.color = "#888";
+        borrowBtn.style.cursor = "not-allowed";
+        borrowBtn.style.opacity = "0.6";
+        
+        if (statusBadge) {
+            statusBadge.textContent = "Borrowed";
+            statusBadge.style.backgroundColor = "#3d2e10";
+            statusBadge.style.color = "#e0a040";
+        }
     }
+    
+    borrowBtn.onclick = function() {
+        if (borrowBtn.disabled) return;
+        
+        const success = borrowBookFromDetails(bookTitle, bookAuthor, bookId);
+        if (success) {
+
+            borrowBtn.disabled = true;
+            borrowBtn.textContent = "Borrowed";
+            borrowBtn.style.backgroundColor = "#555";
+            borrowBtn.style.color = "#888";
+            borrowBtn.style.cursor = "not-allowed";
+            borrowBtn.style.opacity = "0.6";
+            
+            if (statusBadge) {
+                statusBadge.textContent = "Borrowed";
+                statusBadge.style.backgroundColor = "#3d2e10";
+                statusBadge.style.color = "#e0a040";
+            }
+        }
+    };
 }
 
+// MY BOOKS PAGE
 
-// My Books Page
-
-function initializeMyBooksPage() {
-
-    const bookPageMap = {
-        "subtle-art": "book_details.html",
-        "atomic-habits": "book_details3.html",
-        "rich-dad-poor-dad": "book_deatils2.html",
-    };
-
-
-    const statusConfig = {
-        returned: { label: "Returned", cls: "status-returned" },
-        overdue: { label: "Overdue", cls: "status-overdue" },
-        borrowed: { label: "Borrowed", cls: "status-borrowed" },
-        available: { label: "Available", cls: "status-available" },
-    };
-
-
-    const style = document.createElement("style");
-    style.textContent = `
-        .status-available {
-            background-color: #1a3d2b;
-            color: #4caf77;
-            border: 1px solid #2e6644;
-        }
-        .status-available::before {
-            background-color: #4caf77;
-        }
-        .book-card {
-            cursor: pointer;
-        }
-        .book-card:hover .book-cover {
-            opacity: 0.85;
-            transition: opacity 0.2s;
-        }
-    `;
-    document.head.appendChild(style);
-
-
-    const borrowed = JSON.parse(localStorage.getItem("borrowedBooks") || "{}");
-
-    Object.entries(bookPageMap).forEach(([cardId, pageFile]) => {
-        const card = document.getElementById(cardId);
-        if (!card) return;
-
-        const badge = card.querySelector(".status-badge");
-        if (!badge) return;
-
-        const storageKey = pageFile.replace(".html", "");
-
-        if (borrowed[storageKey] === "borrowed") {
-            applyStatusToBadge(badge, "borrowed", statusConfig);
-        }
-
-
-        card.addEventListener("click", () => {
-            window.location.href = pageFile;
-        });
+function displayMyBooks() {
+    const container = document.querySelector(".books-list");
+    if (!container) return;
+    
+    let borrowedBooks = JSON.parse(localStorage.getItem("borrowedBooksList")) || [];
+    
+    if (borrowedBooks.length === 0) {
+        container.innerHTML = `
+            <li style="list-style: none; text-align: center; padding: 60px;">
+                <p style="color: #c0c0c0;">📚 You haven't borrowed any books yet.</p>
+                <a href="books.html" style="display: inline-block; margin-top: 20px; padding: 10px 20px; background: #c9a84c; color: #1a1a1a; text-decoration: none; border-radius: 6px;">Browse Books</a>
+            </li>
+        `;
+        return;
+    }
+    
+    container.innerHTML = "";
+    
+    borrowedBooks.forEach((book, index) => {
+        const dueDate = new Date(book.dueDate);
+        const today = new Date();
+        const daysLeft = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
+        const isOverdue = daysLeft < 0;
+        
+        const listItem = document.createElement("li");
+        listItem.className = "book-card";
+        listItem.style.cssText = "display: flex; gap: 20px; padding: 20px; background: #242424; border-radius: 10px; margin-bottom: 15px;";
+        
+        listItem.innerHTML = `
+            <div style="flex: 1;">
+                <h3 style="color: #c9a84c; margin: 0 0 8px 0;">${book.name}</h3>
+                <p style="color: #c0c0c0; margin: 0 0 5px 0;">by ${book.author || "Unknown Author"}</p>
+                <p style="color: #909090; font-size: 0.9rem; margin: 10px 0;">
+                    <strong>Borrowed:</strong> ${new Date(book.borrowedDate).toLocaleDateString()}<br>
+                    <strong>Due:</strong> ${dueDate.toLocaleDateString()}
+                    ${isOverdue ? '<span style="color: #d05555;"> (OVERDUE)</span>' : `<span style="color: #4caf77;"> (${daysLeft} days left)</span>`}
+                </p>
+                <button onclick="returnBookFromMyBooks(${index})" style="padding: 8px 20px; background: #444; color: #c9a84c; border: 1px solid #c9a84c; border-radius: 6px; cursor: pointer;">
+                    Return Book
+                </button>
+            </div>
+        `;
+        
+        container.appendChild(listItem);
     });
-
-    function applyStatusToBadge(badge, statusKey, config) {
-        const cfg = config[statusKey];
-        if (!cfg) return;
-
-
-        Object.values(config).forEach(({ cls }) => badge.classList.remove(cls));
-
-        badge.textContent = cfg.label;
-        badge.classList.add(cfg.cls);
-    }
 }
 
-// Modefied DOMContentLoaded TO HANDLE ALL PAGES
+function returnBookFromMyBooks(index) {
+    let borrowedBooks = JSON.parse(localStorage.getItem("borrowedBooksList")) || [];
+    const book = borrowedBooks[index];
+    
+    if (!book) return;
+    
+    const confirmed = confirm(`Are you sure you want to return "${book.name}"?`);
+    if (!confirmed) return;
+    
+    borrowedBooks.splice(index, 1);
+    localStorage.setItem("borrowedBooksList", JSON.stringify(borrowedBooks));
+    
+    let books = JSON.parse(localStorage.getItem("books")) || [];
+    const bookInMain = books.find(b => b.name === book.name);
+    if (bookInMain) {
+        bookInMain.status = "available";
+        localStorage.setItem("books", JSON.stringify(books));
+    }
+    
+    alert(`"${book.name}" has been returned successfully!`);
+    displayMyBooks();
+}
 
-
+// Main DOMContentLoaded handler
 document.addEventListener("DOMContentLoaded", function () {
     const path = window.location.pathname;
     const filename = path.split("/").pop();
@@ -636,10 +534,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     if (filename === "book_details.html" || filename === "book_details3.html" || filename === "book_deatils2.html") {
-        initializeBookDetailsPage();
+        setupBookDetailsPage();
     }
 
     if (filename === "my_books.html") {
-        initializeMyBooksPage();
+        displayMyBooks();
     }
 });
