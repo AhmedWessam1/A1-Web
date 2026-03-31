@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Books</title>
+    <title>My Borrowed Books</title>
     <link rel="stylesheet" href="../styles/nav.css">
-    <link rel="stylesheet" href="../styles/style.css">
     <link rel="stylesheet" href="../styles/signup-login.css">
+    <link rel="stylesheet" href="../styles/my-books.css">
     <script src="../scripts/app.js"></script>
 </head>
 <body>
@@ -26,34 +26,51 @@
             </ul>
         </div>
     </div>
-    
-    
 
-   
-    <div>
-        <img src="./Images/9780062641540.jpg" alt="The Subtle Art of Not Giving a F*ck" width="200">
-        <p><b>Status:</b> Returned</p>
-    </div>
+    <main class="page-content">
 
-    <hr>
+        <h1 class="page-title">My Books</h1>
 
-    
-    <div>
-        <img src="./Images/81kg51XRc1L._SY425_.jpg" alt="Atomic Habits" width="200">
-        <p><b>Status:</b> Overdue</p>
-    </div>
+        <ul class="books-list">
 
-    <hr>
+        </ul>
 
-    
-    <div>
-        <img src="./Images/51u8ZRDCVoL._SY445_SX342_ML2_.jpg" alt="Rich Dad Poor Dad" width="200">
-        <p><b>Status:</b> Borrowed</p>
-    </div>
+        
+        <button class="back-btn" type="button" onclick="goToHome()">Go To Home</button>
+        
 
-    <hr>
+    </main>
 
-    <button type="submit" class="submit" style="width: 200px;" onclick="goToHome()">Back to Home</button>
+    <footer class="home-footer">
+        <div class="footer-col">
+            <h3>Bookify Library</h3>
+            <p>Your digital reading corner for timeless classics and modern favorites.</p>
+        </div>
+        <div class="footer-col">
+            <h4>Quick Links</h4>
+            <ul class="footer-list">
+                <li class="footer-item">
+                    <a href="home.html">Home</a>
+                </li>
+                <li class="footer-item">
+                    <a href="books.html">View Books</a>
+                </li>
+                <li class="footer-item">
+                    <a href="login.html" onclick="logout()">Logout</a>
+                </li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h4>Library Hours</h4>
+            <p>Sun - Thu: 11:00 AM - 9:00 PM</p>
+            <p>Fri - Sat: 2:00 AM - 9:00 PM</p>
+        </div>
+        <div class="footer-col">
+            <h4>Contact</h4>
+            <p>Email: support@bookify.com</p>
+            <p>Phone: 012345</p>
+        </div>
+    </footer>
 
 </body>
 </html>
