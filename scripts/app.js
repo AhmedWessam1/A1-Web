@@ -261,7 +261,7 @@ document.addEventListener("DOMContentLoaded", function () {
         localStorage.removeItem("Role");
         return;
     } else {
-        homeNavbarForUser();
+        homeNavbarAndFooterForUser();
     }
 });
 
