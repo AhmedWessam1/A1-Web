@@ -144,6 +144,9 @@ function displayBooks() {
                 <button class="details-btn" onclick="deleteBook(${index})">
                     Delete
                 </button>
+                <button class="details-btn" onclick="">
+                    Edit
+                </button>
             </div>
             `;
         }
