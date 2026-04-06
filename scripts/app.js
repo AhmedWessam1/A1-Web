@@ -289,7 +289,7 @@ function goToHome() {
 
 function searchBooks(event) {
     event.preventDefault();
- 
+    const role = localStorage.getItem("Role");
     const query = document.getElementById("searchInput").value.trim().toLowerCase();
     const container = document.getElementById("booksContainer");
  
@@ -318,22 +318,46 @@ function searchBooks(event) {
         const allBooks = JSON.parse(localStorage.getItem("books")) || [];
         const index = allBooks.findIndex(b => b.id === book.id);
  
-        container.innerHTML += `
-        <div class="book-card">
-            <h3>${book.name}</h3>
-            <p>${book.author}</p>
-            <p>${book.category}</p>
-            <span class="badge ${book.status === "available" ? "available" : "not-available"}">
-                ${book.status}
-            </span>
-            <button class="details-btn" onclick="showDetails(${index})">
-                View Details
-            </button>
-            <button class="borrow-from-books-btn" onclick="borrowBookFromBooks(${index})" ${book.status !== "available" ? "disabled" : ""}>
-                Borrow
-            </button>
-        </div>
-        `;
+        if (role == "user") {
+            const isBorrowed = book.status === "borrowed";
+            container.innerHTML += `
+            <div class="book-card">
+                <h3>${book.name}</h3>
+                <p>${book.author}</p>
+                <p>${book.category}</p>
+                <span class="badge ${book.status === "available" ? "available" : "not-available"}">
+                    ${book.status}
+                </span>
+                <button class="details-btn" onclick="showDetails(${index})">
+                    View Details
+                </button>
+                <button class="borrow-from-books-btn" onclick="borrowBookFromBooks(${index})" ${book.status !== "available" ? "disabled" : ""}>
+                    ${isBorrowed ? "Borrowed" : "Borrow"}
+                </button>
+            </div>
+            `;
+        }
+        else if (role == "admin") {
+            container.innerHTML += `
+            <div class="book-card">
+                <h3>${book.name}</h3>
+                <p>${book.author}</p>
+                <p>${book.category}</p>
+                <span class="badge ${book.status === "available" ? "available" : "not-available"}">
+                    ${book.status}
+                </span>
+                <button class="details-btn" onclick="showDetails(${index})">
+                    View Details
+                </button>
+                <button class="details-btn" onclick="deleteBook(${index})">
+                    Delete
+                </button>
+                <button class="details-btn" onclick="">
+                    Edit
+                </button>
+            </div>
+            `;
+        }
     });
 }
  
