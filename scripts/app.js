@@ -103,7 +103,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function displayBooks() {
     const container = document.getElementById("booksContainer");
-    const role = localStorage.getItem("Role");
 
     if (!container) return;
 
@@ -112,58 +111,20 @@ function displayBooks() {
     container.innerHTML = "";
 
     books.forEach((book, index) => {
-        if (role == "user") {
-            container.innerHTML += `
-            <div class="book-card">
-                <h3>${book.name}</h3>
-                <p>${book.author}</p>
-                <p>${book.category}</p>
-                <span class="badge ${book.status === "available" ? "available" : "not-available"}">
-                    ${book.status}
-                </span>
-                <button class="details-btn" onclick="window.location.href='book_details.html?id=${book.id}'">
-                    View Details
-                </button>
-            </div>
-            `;
-        }
-        else if (role == "admin") {
-            container.innerHTML += `
-            <div class="book-card">
-                <h3>${book.name}</h3>
-                <p>${book.author}</p>
-                <p>${book.category}</p>
-                <span class="badge ${book.status === "available" ? "available" : "not-available"}">
-                    ${book.status}
-                </span>
-                <button class="details-btn" onclick="window.location.href='book_details.html?id=${book.id}'">
-                    View Details
-                </button>
-                <button class="details-btn" onclick="deleteBook(${index})">
-                    Delete
-                </button>
-                <button class="details-btn" onclick="">
-                    Edit
-                </button>
-            </div>
-            `;
-        }
+        container.innerHTML += `
+        <div class="book-card">
+            <h3>${book.name}</h3>
+            <p>${book.author}</p>
+            <p>${book.category}</p>
+            <span class="badge ${book.status === "available" ? "available" : "not-available"}">
+                ${book.status}
+            </span>
+            <button class="details-btn" onclick="window.location.href='book_details.html?id=${book.id}'">
+                View Details
+            </button>
+        </div>
+        `;
     });
-}
-
-function deleteBook(index) {
-    let books = JSON.parse(localStorage.getItem("books")) || [];
-
-    const confirmed = confirm(`Are you sure you want to delete "${books[index].name}"?`);
-    if (!confirmed) {
-        return;
-    }
-
-    books.splice(index, 1);
-    localStorage.setItem("books", JSON.stringify(books));
-
-    alert("Book deleted successfully.");
-    displayBooks();
 }
 
 function showDetails(index) {
@@ -287,44 +248,20 @@ function searchBooks(event) {
     filtered.forEach(book => {
         const allBooks = JSON.parse(localStorage.getItem("books")) || [];
         const index = allBooks.findIndex(b => b.id === book.id);
-        const role = localStorage.getItem("Role");
         
-        if (role == "user") {
-            container.innerHTML += `
-            <div class="book-card">
-                <h3>${book.name}</h3>
-                <p>${book.author}</p>
-                <p>${book.category}</p>
-                <span class="badge ${book.status === "available" ? "available" : "not-available"}">
-                    ${book.status}
-                </span>
-                <button class="details-btn" onclick="window.location.href='book_details.html?id=${book.id}'">
-                    View Details
-                </button>
-            </div>
-            `;
-        }
-        else if (role == "admin") {
-            container.innerHTML += `
-            <div class="book-card">
-                <h3>${book.name}</h3>
-                <p>${book.author}</p>
-                <p>${book.category}</p>
-                <span class="badge ${book.status === "available" ? "available" : "not-available"}">
-                    ${book.status}
-                </span>
-                <button class="details-btn" onclick="window.location.href='book_details.html?id=${book.id}'">
-                    View Details
-                </button>
-                <button class="details-btn" onclick="deleteBook(${index})">
-                    Delete
-                </button>
-                <button class="details-btn" onclick="">
-                    Edit
-                </button>
-            </div>
-            `;
-        }
+        container.innerHTML += `
+        <div class="book-card">
+            <h3>${book.name}</h3>
+            <p>${book.author}</p>
+            <p>${book.category}</p>
+            <span class="badge ${book.status === "available" ? "available" : "not-available"}">
+                ${book.status}
+            </span>
+            <button class="details-btn" onclick="window.location.href='book_details.html?id=${book.id}'">
+                View Details
+            </button>
+        </div>
+        `;
     });
 }
  
@@ -428,8 +365,39 @@ function populateBookDetails(book) {
 function setupBorrowButton(book) {
     const borrowBtn = document.querySelector(".borrow-btn");
     const statusBadge = document.querySelector(".status-badge");
+    const role = localStorage.getItem("Role");
     
     if (!borrowBtn) return;
+
+    if (role === "admin") {
+        const bookFooter = document.querySelector(".book-footer");
+        if (bookFooter) {
+            borrowBtn.remove();
+
+            const deleteBtn = document.createElement("button");
+            deleteBtn.className = "borrow-btn";
+            deleteBtn.type = "button";
+            deleteBtn.textContent = "Delete";
+            deleteBtn.onclick = function () {
+                const books = JSON.parse(localStorage.getItem("books")) || [];
+                const index = books.findIndex(currentBook => currentBook.id == book.id);
+
+                if (index !== -1) {
+                    deleteBook(index);
+                    window.location.href = "books.html";
+                }
+            };
+
+            const editBtn = document.createElement("button");
+            editBtn.className = "borrow-btn";
+            editBtn.type = "button";
+            editBtn.textContent = "Edit";
+
+            bookFooter.appendChild(deleteBtn);
+            bookFooter.appendChild(editBtn);
+        }
+        return;
+    }
     
     if (book.status === "borrowed") {
         borrowBtn.disabled = true;
@@ -443,12 +411,6 @@ function setupBorrowButton(book) {
     }
     
     borrowBtn.addEventListener("click", function() {
-        const role = localStorage.getItem("Role");
-        if (!role || role !== "user") {
-            alert("Please login as a user to borrow books!");
-            window.location.href = "login.html";
-            return;
-        }
         
         const confirmBorrow = confirm(`Do you want to borrow "${book.name}"?`);
         
@@ -481,6 +443,21 @@ function setupBorrowButton(book) {
             alert(`You have successfully borrowed "${book.name}"!`);
         }
     });
+}
+
+function deleteBook(index) {
+    let books = JSON.parse(localStorage.getItem("books")) || [];
+
+    const confirmed = confirm(`Are you sure you want to delete "${books[index].name}"?`);
+    if (!confirmed) {
+        return;
+    }
+
+    books.splice(index, 1);
+    localStorage.setItem("books", JSON.stringify(books));
+
+    alert("Book deleted successfully.");
+    displayBooks();
 }
 
 // MY BOOKS PAGE 
