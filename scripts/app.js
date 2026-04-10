@@ -142,6 +142,9 @@ function displayBooks() {
                 <button class="details-btn" onclick="deleteBook(${index})">
                     Delete
                 </button>
+                <button class="details-btn" onclick="">
+                    Edit
+                </button>
             </div>
             `;
         }
@@ -284,20 +287,44 @@ function searchBooks(event) {
     filtered.forEach(book => {
         const allBooks = JSON.parse(localStorage.getItem("books")) || [];
         const index = allBooks.findIndex(b => b.id === book.id);
- 
-        container.innerHTML += `
-        <div class="book-card">
-            <h3>${book.name}</h3>
-            <p>${book.author}</p>
-            <p>${book.category}</p>
-            <span class="badge ${book.status === "available" ? "available" : "not-available"}">
-                ${book.status}
-            </span>
-            <button class="details-btn" onclick="window.location.href='book_details.html?id=${book.id}'">
-                View Details
-            </button>
-        </div>
-        `;
+        const role = localStorage.getItem("Role");
+        
+        if (role == "user") {
+            container.innerHTML += `
+            <div class="book-card">
+                <h3>${book.name}</h3>
+                <p>${book.author}</p>
+                <p>${book.category}</p>
+                <span class="badge ${book.status === "available" ? "available" : "not-available"}">
+                    ${book.status}
+                </span>
+                <button class="details-btn" onclick="window.location.href='book_details.html?id=${book.id}'">
+                    View Details
+                </button>
+            </div>
+            `;
+        }
+        else if (role == "admin") {
+            container.innerHTML += `
+            <div class="book-card">
+                <h3>${book.name}</h3>
+                <p>${book.author}</p>
+                <p>${book.category}</p>
+                <span class="badge ${book.status === "available" ? "available" : "not-available"}">
+                    ${book.status}
+                </span>
+                <button class="details-btn" onclick="window.location.href='book_details.html?id=${book.id}'">
+                    View Details
+                </button>
+                <button class="details-btn" onclick="deleteBook(${index})">
+                    Delete
+                </button>
+                <button class="details-btn" onclick="">
+                    Edit
+                </button>
+            </div>
+            `;
+        }
     });
 }
  
