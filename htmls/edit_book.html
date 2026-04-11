@@ -30,12 +30,12 @@
                 <h1 class="title">Edit Book</h1>
             </div>
             <div class="text-center">
-                <form action="books.html" method="post">
+                <form id="editBookForm" onsubmit="updateBook(event)">
                     
                     <div>
                         <label for="book-id" class="text-color-white">Book ID</label>
                         <div class="mt-3px">
-                            <input type="text" name="book-id" id="book-id" class="input" value="102" readonly>
+                            <input type="text" id="book-id" class="input" readonly>
                         </div>
                     </div>
                     <br>
@@ -43,7 +43,7 @@
                     <div>
                         <label for="book-name" class="text-color-white">Book Name</label>
                         <div class="mt-3px">
-                            <input type="text" name="book-name" id="book-name" class="input" value="Clean Code" required>
+                            <input type="text" id="book-name" class="input" required>
                         </div>
                     </div>
                     <br>
@@ -51,7 +51,7 @@
                     <div>
                         <label for="author" class="text-color-white">Author</label>
                         <div class="mt-3px">
-                            <input type="text" name="author" id="author" class="input" value="Robert C. Martin" required>
+                            <input type="text" id="author" class="input" required>
                         </div>
                     </div>
                     <br>
@@ -59,7 +59,7 @@
                     <div>
                         <label for="category" class="text-color-white">Category</label>
                         <div class="mt-3px">
-                            <input type="text" name="category" id="category" class="input" value="Programming" required>
+                            <input type="text" id="category" class="input" required>
                         </div>
                     </div>
                     <br>
@@ -67,7 +67,7 @@
                     <div>
                         <label for="description" class="text-color-white">Description</label>
                         <div class="mt-3px">
-                            <textarea name="description" id="description" class="input" rows="4" required>Software development book</textarea>
+                            <textarea id="description" class="input" rows="4" required></textarea>
                         </div>
                     </div>
                     <br>
@@ -80,5 +80,6 @@
             </div>
         </div>
     </div>
+    <script src="../scripts/app.js"></script>
 </body>
 </html>
