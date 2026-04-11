@@ -392,6 +392,9 @@ function setupBorrowButton(book) {
             editBtn.className = "borrow-btn";
             editBtn.type = "button";
             editBtn.textContent = "Edit";
+            editBtn.onclick = function () {
+                window.location.href = `edit_book.html?id=${book.id}`;
+            };
 
             bookFooter.appendChild(deleteBtn);
             bookFooter.appendChild(editBtn);
