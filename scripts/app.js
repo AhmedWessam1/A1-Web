@@ -187,6 +187,44 @@ function displayHomeBooks() {
         `;
     });
 }
+function initializeEditBookPage() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const bookId = urlParams.get("id");
+
+    const books = JSON.parse(localStorage.getItem("books")) || [];
+    const book = books.find(b => b.id == bookId);
+
+    if (!book) return;
+
+    document.getElementById("book-id").value = book.id;
+    document.getElementById("book-name").value = book.name;
+    document.getElementById("author").value = book.author;
+    document.getElementById("category").value = book.category;
+    document.getElementById("description").value = book.description;
+}
+function updateBook(event) {
+    event.preventDefault();
+
+    let books = JSON.parse(localStorage.getItem("books")) || [];
+
+    const id = document.getElementById("book-id").value;
+
+    const index = books.findIndex(b => b.id == id);
+
+    if (index === -1) return;
+
+    books[index].name = document.getElementById("book-name").value;
+    books[index].author = document.getElementById("author").value;
+    books[index].category = document.getElementById("category").value;
+    books[index].description = document.getElementById("description").value;
+
+    localStorage.setItem("books", JSON.stringify(books));
+
+    alert("Book updated successfully ✅");
+
+    window.location.href = "books.html";
+}
+
 
 window.onclick = function(event) {
     let modal = document.getElementById("bookModal");
@@ -540,4 +578,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (filename === "my_books.html") {
         initializeMyBooksPage();
     }
+    if (filename === "edit_book.html") {
+    initializeEditBookPage();
+}
 });
