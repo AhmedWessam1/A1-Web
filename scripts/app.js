@@ -196,7 +196,7 @@ function initializeEditBookPage() {
 
     if (!book) return;
 
-    document.getElementById("book-id").value = book.id;
+    
     document.getElementById("book-name").value = book.name;
     document.getElementById("author").value = book.author;
     document.getElementById("category").value = book.category;
@@ -207,24 +207,24 @@ function updateBook(event) {
 
     let books = JSON.parse(localStorage.getItem("books")) || [];
 
-    const id = document.getElementById("book-id").value;
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get("id");
 
     const index = books.findIndex(b => b.id == id);
-
     if (index === -1) return;
 
+   
     books[index].name = document.getElementById("book-name").value;
     books[index].author = document.getElementById("author").value;
     books[index].category = document.getElementById("category").value;
     books[index].description = document.getElementById("description").value;
 
+    
     localStorage.setItem("books", JSON.stringify(books));
 
-    alert("Book updated successfully ✅");
-
+    
     window.location.href = "books.html";
 }
-
 
 window.onclick = function(event) {
     let modal = document.getElementById("bookModal");
