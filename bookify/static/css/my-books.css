@@ -89,43 +89,10 @@ body {
     text-transform: uppercase;
 }
 
-.status-badge::before {
-    content: '';
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    display: inline-block;
-    flex-shrink: 0;
-}
-
-.status-returned {
-    background-color: #1a3d2b;
-    color: #4caf77;
-    border: 1px solid #2e6644;
-}
-
-.status-returned::before {
-    background-color: #4caf77;
-}
-
-.status-overdue {
-    background-color: #3d1a1a;
-    color: #d05555;
-    border: 1px solid #662e2e;
-}
-
-.status-overdue::before {
-    background-color: #d05555;
-}
-
 .status-borrowed {
     background-color: #3d2e10;
     color: #e0a040;
     border: 1px solid #66480a;
-}
-
-.status-borrowed::before {
-    background-color: #e0a040;
 }
 
 .back-btn {
