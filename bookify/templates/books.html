@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Books</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/nav.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/signup-login.css' %}">
+    <script src="{% static 'js/app.js' %}" defer></script>
+</head>
+<body>
+<div class="nav">
+    <div class="nav-col">
+        <h2><a href="{% url 'home' %}">Bookify <span>library</span></a></h2>
+    </div>
+    <div class="nav-col">
+        <ul class="nav-list">
+            <li class="nav-item">
+                <a href="{% url 'signup' %}">Sign Up</a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'login' %}">Login</a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="wrapper-full">
+
+    <div class="books-page">
+        <h1>Our Collection</h1>
+
+<div class="text-center">
+
+    <h2 class="title" style="margin-bottom:15px;">Search Books</h2>
+
+    <form onsubmit="searchBooks(event)">
+    <div>
+        <input type="text" id="searchInput" style="width: 60%;" class="input" placeholder="Enter book title or author" required>
+    </div>
+
+    <div>
+        <button type="submit" style="width: 80px; height: 30px;" class="submit">Search</button>
+        <button type="button" onclick="clearSearch()" style="width: 80px; height: 30px;" class="submit">Clear</button>
+    </div>
+</form>
+</div>
+    
+
+
+
+        <div class="books-grid" id="booksContainer"></div>
+    </div>
+
+    <footer class="home-footer">
+        <div class="footer-col">
+            <h3>Bookify Library</h3>
+            <p>Your digital reading corner for timeless classics and modern favorites.</p>
+        </div>
+        <div class="footer-col">
+            <h4>Quick Links</h4>
+            <ul class="footer-list">
+                <li class="footer-item">
+                    <a href="{% url 'home' %}">Home</a>
+                </li>
+                <li class="footer-item">
+                    <a href="{% url 'signup' %}">Sign Up</a>
+                </li>
+                <li class="footer-item">
+                    <a href="{% url 'login' %}">Login</a>
+                </li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h4>Library Hours</h4>
+            <p>Sun - Thu: 11:00 AM - 9:00 PM</p>
+            <p>Fri - Sat: 2:00 AM - 9:00 PM</p>
+        </div>
+        <div class="footer-col">
+            <h4>Contact</h4>
+            <p>Email: support@bookify.com</p>
+            <p>Phone: 012345</p>
+        </div>
+    </footer>
+</div>
+
+<div id="bookModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <h2>Book Details</h2>
+        <div id="modalBody"></div>
+    </div>
+</div>
+
+</body>
+</html>

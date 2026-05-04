@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Details</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/nav.css' %}">
+    <link rel="stylesheet" href="{% static 'css/book-details.css' %}">
+</head>
+<body>
+
+   <div class="nav">
+        <div class="nav-col">
+            <h2><a href="{% url 'home' %}">Bookify <span>library</span></a></h2>
+        </div>
+        <div class="nav-col">
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="{% url 'signup' %}">Sign Up</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'login' %}">Login</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <main class="page-content">
+        <div class="book-card">
+
+            <div class="card-top">
+
+                <div class="cover-col">
+                    <img class="book-cover" src="./Images/51u8ZRDCVoL._SY445_SX342_ML2_.jpg" alt="Rich Dad Poor Dad">
+                </div>
+
+                <div class="details-col">
+
+                    <h1 class="book-title">Rich Dad Poor Dad</h1>
+
+                    <section class="info-section" id="category">
+                        <h3 class="info-label">Category</h3>
+                        <p class="info-text">
+                            <strong>Nonfiction</strong> — Personal Finance / Self-Development.
+                            The book focuses on financial literacy, investing, and wealth-building mindset.
+                        </p>
+                    </section>
+
+                    <section class="info-section" id="author">
+                        <h3 class="info-label">Author</h3>
+                        <p class="info-text">
+                            <strong>Robert T. Kiyosaki</strong> — an American entrepreneur, investor,
+                            and author known for his teachings on financial education and independence.
+                            He is best known for the "Rich Dad" series of personal finance books.
+                        </p>
+                    </section>
+
+                    <section class="info-section" id="published">
+                        <h3 class="info-label">Published</h3>
+                        <p class="info-text">
+                            First published in <strong>1997</strong>.
+                        </p>
+                    </section>
+
+                    <div class="book-footer">
+                        <span class="status-badge">Available</span>
+                        <button class="borrow-btn" type="button">Borrow</button>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <section class="info-section" id="description">
+                <h3 class="info-label">Description</h3>
+                <p class="info-text">
+                    <strong>Rich Dad Poor Dad</strong> tells the story of Robert Kiyosaki growing up
+                    with two father figures: his biological father ("Poor Dad"), who was highly educated
+                    but struggled financially, and his best friend's father ("Rich Dad"), who was less
+                    formally educated but became wealthy through investing and entrepreneurship.
+                    <br><br>
+                    The book contrasts the mindsets of the two dads and highlights key lessons about money,
+                    such as the importance of financial education, building assets instead of liabilities,
+                    and making money work for you rather than working for money.
+                    <br><br>
+                    It emphasizes concepts like passive income, investing in real estate and businesses,
+                    and developing a mindset focused on financial independence instead of relying solely
+                    on a traditional job.
+                </p>
+            </section>
+
+            <section class="info-section" id="key-lessons">
+                <h3 class="info-label">Key Lessons</h3>
+                <ul class="info-text">
+                    <li>The rich don’t work for money — they make money work for them.</li>
+                    <li>Assets put money in your pocket; liabilities take money out.</li>
+                    <li>Financial education is more important than formal education.</li>
+                    <li>Investing and entrepreneurship are key to building wealth.</li>
+                    <li>Overcoming fear and taking risks is essential for success.</li>
+                </ul>
+            </section>
+
+        </div>
+    </main>
+
+    <footer class="home-footer">
+        <div class="footer-col">
+            <h3>Bookify Library</h3>
+            <p>Your digital reading corner for timeless classics and modern favorites.</p>
+        </div>
+        <div class="footer-col">
+            <h4>Quick Links</h4>
+            <ul class="footer-list">
+                <li class="footer-item">
+                    <a href="{% url 'home' %}">Home</a>
+                </li>
+                <li class="footer-item">
+                    <a href="{% url 'signup' %}">Sign Up</a>
+                </li>
+                <li class="footer-item">
+                    <a href="{% url 'login' %}">Login</a>
+                </li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h4>Library Hours</h4>
+            <p>Sun - Thu: 11:00 AM - 9:00 PM</p>
+            <p>Fri - Sat: 2:00 AM - 9:00 PM</p>
+        </div>
+        <div class="footer-col">
+            <h4>Contact</h4>
+            <p>Email: support@bookify.com</p>
+            <p>Phone: 012345</p>
+        </div>
+    </footer>
+
+
+    <script src="../scripts/app.js"></script>
+</body>
+</html>

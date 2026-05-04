@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Details</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/nav.css' %}">
+    <link rel="stylesheet" href="{% static 'css/signup-login.css' %}">
+    <link rel="stylesheet" href="{% static 'css/book-details.css' %}">
+    <script src="{% static 'js/app.js' %}" defer></script>
+</head>
+<body>
+
+   <div class="nav">
+        <div class="nav-col">
+            <h2><a href="{% url 'home' %}">Bookify <span>library</span></a></h2>
+        </div>
+        <div class="nav-col">
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="{% url 'signup' %}">Sign Up</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'login' %}">Login</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <main class="page-content">
+        <div class="book-card">
+
+            <div class="card-top">
+
+                <div class="cover-col">
+                    <img class="book-cover" src="./Images/default-book-cover.jpg" alt="Book Cover">
+                </div>
+
+                <div class="details-col">
+
+                    <h1 class="book-title">Book Title</h1>
+
+                    <section class="info-section" id="category">
+                        <h3 class="info-label">Category</h3>
+                        <p class="info-text">
+                            <strong>Category</strong>
+                        </p>
+                    </section>
+
+                    <section class="info-section" id="author">
+                        <h3 class="info-label">Author</h3>
+                        <p class="info-text">
+                            <strong>Author Name</strong>
+                        </p>
+                    </section>
+
+                    <div class="book-footer">
+                        <span class="status-badge">Available</span>
+                        <button class="borrow-btn" type="button">Borrow</button>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <section class="info-section" id="description">
+                <h3 class="info-label">Description</h3>
+                <p class="info-text">
+
+                </p>
+            </section>
+
+        </div>
+    </main>
+
+    <footer class="home-footer">
+        <div class="footer-col">
+            <h3>Bookify Library</h3>
+            <p>Your digital reading corner for timeless classics and modern favorites.</p>
+        </div>
+        <div class="footer-col">
+            <h4>Quick Links</h4>
+            <ul class="footer-list">
+                <li class="footer-item">
+                    <a href="{% url 'home' %}">Home</a>
+                </li>
+                <li class="footer-item">
+                    <a href="{% url 'signup' %}">Sign Up</a>
+                </li>
+                <li class="footer-item">
+                    <a href="{% url 'login' %}">Login</a>
+                </li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h4>Library Hours</h4>
+            <p>Sun - Thu: 11:00 AM - 9:00 PM</p>
+            <p>Fri - Sat: 2:00 AM - 9:00 PM</p>
+        </div>
+        <div class="footer-col">
+            <h4>Contact</h4>
+            <p>Email: support@bookify.com</p>
+            <p>Phone: 012345</p>
+        </div>
+    </footer>
+
+</body>
+</html>
