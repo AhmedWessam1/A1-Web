@@ -16,12 +16,7 @@
         </div>
         <div class="nav-col">
             <ul class="nav-list">
-                <li class="nav-item">
-                    <a href="{% url 'signup' %}">Sign Up</a>
-                </li>
-                <li class="nav-item">
-                    <a href="{% url 'login' %}">Login</a>
-                </li>
+                {% include 'NavbarAndFooter/nav_links.html' %}
             </ul>
         </div>
     </div>
@@ -78,9 +73,10 @@
     </div>
     <script src="{% static 'js/app.js' %}" defer></script>
     <script>
-document.addEventListener("DOMContentLoaded", function () {
-    initializeEditBookPage();
-});
-</script>
+        window.SERVER_ROLE = "{{ role|default:'' }}";
+        document.addEventListener("DOMContentLoaded", function () {
+            initializeEditBookPage();
+        });
+    </script>
 </body>
 </html>

@@ -10,12 +10,12 @@
     <link rel="stylesheet" href="{% static 'css/signup-login.css' %}">
     <script src="{% static 'js/app.js' %}" defer></script>
     <script>
-    const role = localStorage.getItem("Role");
-    if (role !== "admin") {
-        alert("Access Denied ❌");
-        window.location.href = "{% url 'home' %}";
-    }
-</script>
+        window.SERVER_ROLE = "{{ role|default:'' }}";
+        if (window.SERVER_ROLE !== "admin") {
+            alert("Access Denied ❌");
+            window.location.href = "{% url 'home' %}";
+        }
+    </script>
 </head>
 <body>
     <div class="nav">
@@ -24,9 +24,7 @@
     </div>
     <div class="nav-col">
         <ul class="nav-list">
-            <li class="nav-item"><a href="{% url 'add_book' %}">Add Book</a></li>
-            <li class="nav-item"><a href="{% url 'books' %}">View Books</a></li>
-            <li class="nav-item"><a href="{% url 'login' %}" onclick="logout()">Logout</a></li>
+            {% include 'NavbarAndFooter/nav_links.html' %}
         </ul>
     </div>
 </div>
@@ -85,9 +83,7 @@
             <div class="footer-col">
                 <h4>Quick Links</h4>
                 <ul class="footer-list">
-                    <li class="footer-item"><a href="{% url 'add_book' %}">Add Book</a></li>
-                    <li class="footer-item"><a href="{% url 'books' %}">View Books</a></li>
-                    <li class="footer-item"><a href="{% url 'login' %}" onclick="logout()">Logout</a></li>
+                    {% include 'NavbarAndFooter/footer_links.html' %}
                 </ul>
             </div>
             <div class="footer-col">
@@ -100,7 +96,6 @@
                 <p>Email: support@bookify.com</p>
                 <p>Phone: 012345</p>
             </div>
-        </div>
     </footer>
 </body>
 </html>

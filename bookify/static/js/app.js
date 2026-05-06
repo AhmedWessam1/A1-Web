@@ -1,98 +1,3 @@
-function MatchPassword() {
-    const password = document.getElementById("password");
-    const ConfirmPassword = document.getElementById("Confirm-Password");
-    const matchPassword = document.getElementById("MatchPasswordlabel");
-
-    if (password.value !== ConfirmPassword.value) {
-        matchPassword.innerText = 'Confirm password should match password';
-        return false;
-    }
-    else {
-        matchPassword.innerText = '';
-        return true;
-    }
-}
-
-function chooseSignUpDashboard(event) {
-    event.preventDefault();
-    const userRadio = document.getElementById("user");
-    const signupForm = document.getElementById("signupForm");
-
-    if (!MatchPassword()) {
-        return false;
-    }
-
-    if (userRadio.checked) {
-        localStorage.setItem("Role", "user");
-        window.location.href = "/core/";
-        return false;
-    }
-    else {
-        localStorage.setItem("Role", "admin");
-        window.location.href = "/core/";
-        return false;
-    }
-}
-
-function chooseLoginDashboard(event) {
-    event.preventDefault();
-    const userRadio = document.getElementById("user");
-    const loginForm = document.getElementById("loginForm");
-
-    if (userRadio.checked) {
-        localStorage.setItem("Role", "user");
-        window.location.href = "/core/";
-        return false;
-    }
-    else {
-        localStorage.setItem("Role", "admin");
-        window.location.href = "/core/";
-        return false;
-    }
-}
-
-function logout() {
-    localStorage.removeItem("Role");
-    
-    const navList = document.querySelector(".nav-list");
-    
-    navList.innerHTML = `
-    <li class="nav-item"><a href="/core/signup/">Sign Up</a></li>
-    <li class="nav-item"><a href="/core/login/">Login</a></li>
-    `;
-}
-
-function homeNavbarAndFooterForUser() {
-    const navList = document.querySelector(".nav-list");
-    const fotterList = document.querySelector(".footer-list");
-    const role = localStorage.getItem("Role");
-
-    if (role == "user") {
-        navList.innerHTML = `
-        <li class="nav-item"><a href="/core/books/">View Books</a></li>
-        <li class="nav-item"><a href="/core/my_books/">My Borrowed Books</a></li>
-        <li class="nav-item"><a href="/core/login/" onclick="logout()">Logout</a></li>
-        `;
-        fotterList.innerHTML = `
-        <li class="footer-item"><a href="/core/books/">View Books</a></li>
-        <li class="footer-item"><a href="/core/my_books/">My Borrowed Books</a></li>
-        <li class="footer-item"><a href="/core/login/" onclick="logout()">Logout</a></li>
-        `;
-    }
-    else if (role == "admin") {
-        navList.innerHTML = `
-        <li class="nav-item"><a href="/core/add_book/">Add Book</a></li>
-        <li class="nav-item"><a href="/core/books/">View Books</a></li>
-        <li class="nav-item"><a href="/core/login/" onclick="logout()">Logout</a></li>
-        `;
-        fotterList.innerHTML = `
-        <li class="footer-item"><a href="/core/add_book/">Add Book</a></li>
-        <li class="footer-item"><a href="/core/books/">View Books</a></li>
-        <li class="footer-item"><a href="/core/login/" onclick="logout()">Logout</a></li>
-        `;
-    }
-}
-
 function displayBooks() {
     const container = document.getElementById("booksContainer");
 
@@ -286,14 +191,7 @@ function clearSearch() {
  
 document.addEventListener("DOMContentLoaded", function () {
     const path = window.location.pathname;
- 
-    if (path.includes("/core/login") || path.includes("/core/signup")) {
-        localStorage.removeItem("Role");
-        return;
-    }
- 
-    homeNavbarAndFooterForUser();
- 
+  
     if (path.includes("/core/books")) {
         displayBooks();
     }
@@ -376,7 +274,7 @@ function populateBookDetails(book) {
 function setupBorrowButton(book) {
     const borrowBtn = document.querySelector(".borrow-btn");
     const statusBadge = document.querySelector(".status-badge");
-    const role = localStorage.getItem("Role");
+    const role = (typeof window !== 'undefined' && window.SERVER_ROLE) ? window.SERVER_ROLE : '';
     
     if (!borrowBtn) return;
 
@@ -527,13 +425,6 @@ function initializeMyBooksPage() {
 
 document.addEventListener("DOMContentLoaded", function () {
     const path = window.location.pathname;
-
-    if (path.includes("/core/login") || path.includes("/core/signup")) {
-        localStorage.removeItem("Role");
-        return;
-    }
-
-    homeNavbarAndFooterForUser();
 
     if (path.includes("/core/books")) {
         displayBooks();

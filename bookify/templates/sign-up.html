@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="{% static 'css/nav.css' %}">
     <link rel="stylesheet" href="{% static 'css/signup-login.css' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <script src="{% static 'js/app.js' %}" defer></script>
 </head>
 
 <body>
@@ -35,8 +34,11 @@
                 <h1 class="title">Create Account</h1>
             </div>
             <div class="text-center">
-                <form id="signupForm" action="{% url 'home' %}" method="get" onsubmit="return chooseSignUpDashboard(event)">
+                <form id="signupForm" action="{% url 'signup' %}" method="post">
                     {% csrf_token %}
+                    {% if error %}
+                    <p style="color: rgb(234, 0, 0); font-weight: bold; margin-bottom: 16px;">{{ error }}</p>
+                    {% endif %}
                     <div>
                         <label for="username" class=" text-color-white">Username</label>
                         <div class="mt-3px">
@@ -54,27 +56,17 @@
                     <div>
                         <label for="password" class=" text-color-white">Password</label>
                         <div class="mt-3px">
-                            <input type="password" name="password" id="password" class="input" minlength="3"
-                                maxlength="20" required>
+                            <input type="password" name="password" id="password" class="input" minlength="8"
+                                maxlength="50" required>
                         </div>
                     </div>
                     <br>
                     <div>
-                        <label for="Confirm-Password" class=" text-color-white">Confirm Password</label>
+                        <label for="confirm_password" class=" text-color-white">Confirm Password</label>
                         <div class="mt-3px">
-                            <input type="password" name="Confirm-Password" id="Confirm-Password" class="input"
-                                minlength="3" maxlength="20" required>
+                            <input type="password" name="confirm_password" id="confirm_password" class="input"
+                                minlength="8" maxlength="50" required>
                         </div>
-                        <br>
-                        <label id="MatchPasswordlabel" style="color: rgb(234, 0, 0); font-weight: bold;"></label>
-                    </div>
-                    <br>
-                    <div class="text-color-white">
-                        <label class="text-color-white">Type</label>
-                        <input type="radio" name="radioButton" id="user" value="user" required> <label
-                            for="user">user</label>
-                        <input type="radio" name="radioButton" id="admin" value="admin"> <label
-                            for="admin">admin</label>
                     </div>
                     <br>
                     <div>

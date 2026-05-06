@@ -1,0 +1,13 @@
+{% if role == 'user' %}
+    <li class="footer-item"><a href="{% url 'books' %}">View Books</a></li>
+    <li class="footer-item"><a href="{% url 'my_books' %}">My Borrowed Books</a></li>
+    <li class="footer-item"><a href="{% url 'logout' %}">Logout</a></li>
+{% elif role == 'admin' %}
+    <li class="footer-item"><a href="{% url 'add_book' %}">Add Book</a></li>
+    <li class="footer-item"><a href="{% url 'books' %}">View Books</a></li>
+    <li class="footer-item"><a href="{% url 'logout' %}">Logout</a></li>
+{% else %}
+    <li class="footer-item"><a href="{% url 'home' %}">Home</a></li>
+    <li class="footer-item"><a href="{% url 'signup' %}">Sign Up</a></li>
+    <li class="footer-item"><a href="{% url 'login' %}">Login</a></li>
+{% endif %}

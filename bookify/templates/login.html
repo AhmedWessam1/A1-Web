@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="{% static 'css/nav.css' %}">
     <link rel="stylesheet" href="{% static 'css/signup-login.css' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <script src="{% static 'js/app.js' %}" defer></script>
 </head>
 <body>
     <div class="nav">
@@ -33,8 +32,11 @@
                 <h1 class="title">Login</h1>
             </div>
             <div class="text-center">
-                <form id="loginForm" action="{% url 'home' %}" method="get" onsubmit="return chooseLoginDashboard(event)">
+                <form id="loginForm" action="{% url 'login' %}" method="post">
                     {% csrf_token %}
+                    {% if error %}
+                    <p style="color: rgb(234, 0, 0); font-weight: bold; margin-bottom: 16px;">{{ error }}</p>
+                    {% endif %}
                     <div>
                         <label for="username" class=" text-color-white">Username</label>
                         <div class="mt-3px">
@@ -43,25 +45,11 @@
                     </div>
                     <br>
                     <div>
-                        <label for="email" class=" text-color-white">Email</label>
-                        <div class="mt-3px">
-                            <input type="email" name="email" id="email" class="input"
-                            required>
-                        </div>
-                    </div>
-                    <br>
-                    <div>
                         <label for="password" class=" text-color-white">Password</label>
                         <div class="mt-3px">
                             <input type="password" name="password" id="password" class="input"
-                            minlength="3" maxlength="20" required>
+                            minlength="8" maxlength="50" required>
                         </div>
-                    </div>
-                    <br>
-                    <div  class="text-color-white">
-                        <label for="gender" class="text-color-white">Type</label>
-                        <input type="radio" name="radioButton" id="user" value="user" required> <label for="user">user</label>
-                        <input type="radio" name="radioButton" id="admin" value="admin"> <label for="admin">admin</label>
                     </div>
                     <br>
                     <div>
