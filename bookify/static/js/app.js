@@ -275,6 +275,7 @@ function setupBorrowButton(book) {
     const borrowBtn = document.querySelector(".borrow-btn");
     const statusBadge = document.querySelector(".status-badge");
     const role = (typeof window !== 'undefined' && window.SERVER_ROLE) ? window.SERVER_ROLE : '';
+    const isAuthenticated = (typeof window !== 'undefined' && window.IS_AUTHENTICATED) ? window.IS_AUTHENTICATED : false;
     
     if (!borrowBtn) return;
 
@@ -319,6 +320,15 @@ function setupBorrowButton(book) {
         borrowBtn.style.cursor = "not-allowed";
         borrowBtn.style.boxShadow = "none";
         borrowBtn.style.opacity = "0.7";
+        return;
+    }
+    
+    if (!isAuthenticated) {
+        borrowBtn.addEventListener("click", function(e) {
+            e.preventDefault();
+            alert("Please sign in to borrow books.");
+            window.location.href = "/core/login/";
+        });
         return;
     }
     
