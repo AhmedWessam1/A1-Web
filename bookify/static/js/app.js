@@ -134,37 +134,52 @@ function goToHome() {
     window.location.href = "/core/";
 }
 
-function searchBooks(event) {
+async function searchBooks(event) {
     event.preventDefault();
- 
+
     const query = document.getElementById("searchInput").value.trim().toLowerCase();
     const container = document.getElementById("booksContainer");
- 
+
     if (!container) return;
- 
+
     if (!query) {
         displayBooks();
         return;
     }
- 
-    let books = JSON.parse(localStorage.getItem("books")) || [];
- 
+
+    // Use cached books from the last displayBooks() call, or fetch if not cached
+    let books = window.BOOKIFY_CACHED_BOOKS || [];
+    if (books.length === 0) {
+        try {
+            const response = await fetch('/core/api/books/', {
+                method: 'GET',
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json',
+                },
+            });
+            if (response.ok) {
+                const data = await response.json();
+                books = data.books || [];
+            }
+        } catch (error) {
+            books = [];
+        }
+    }
+
     const filtered = books.filter(book =>
         book.name.toLowerCase().includes(query) ||
         book.author.toLowerCase().includes(query)
     );
- 
+
     container.innerHTML = "";
- 
+
     if (filtered.length === 0) {
         container.innerHTML = `<p style="color:white; text-align:center; grid-column:1/-1;">No books found.</p>`;
         return;
     }
- 
+
     filtered.forEach(book => {
-        const allBooks = JSON.parse(localStorage.getItem("books")) || [];
-        const index = allBooks.findIndex(b => b.id === book.id);
-        
         container.innerHTML += `
         <div class="book-card">
             <h3>${book.name}</h3>
@@ -180,7 +195,7 @@ function searchBooks(event) {
         `;
     });
 }
- 
+
 function clearSearch() {
     const input = document.getElementById("searchInput");
     if (input) input.value = "";
@@ -205,103 +220,146 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // Book Details Page
 
-function initializeBookDetailsPage() {
+function getCSRFToken() {
+    const cookieName = 'csrftoken';
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.startsWith(cookieName + '=')) {
+            return decodeURIComponent(cookie.substring(cookieName.length + 1));
+        }
+    }
+    return '';
+}
+
+async function initializeBookDetailsPage() {
     const urlParams = new URLSearchParams(window.location.search);
     const bookId = urlParams.get('id');
-    
+
     if (!bookId) {
-        window.location.href = "/core/books/";
+        window.location.href = '/core/books/';
         return;
     }
-    
-    const books = JSON.parse(localStorage.getItem("books")) || [];
-    const book = books.find(b => b.id == bookId);
-    
-    if (!book) {
-        window.location.href = "/core/books/";
-        return;
+
+    try {
+        const response = await fetch(`/core/api/books/${bookId}/`, {
+            method: 'GET',
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error('Book not found');
+        }
+
+        const data = await response.json();
+        const book = data.book;
+
+        if (!book) {
+            throw new Error('Book not found');
+        }
+
+        populateBookDetails(book);
+        setupBorrowButton(book);
+    } catch (error) {
+        window.location.href = '/core/books/';
     }
-    
-    populateBookDetails(book);
-    
-    setupBorrowButton(book);
 }
 
 function populateBookDetails(book) {
 
-    const coverImg = document.querySelector(".book-cover");
+    const coverImg = document.querySelector('.book-cover');
     if (coverImg) {
-        coverImg.src = book.coverImage || "./Images/default-book-cover.jpg";
+        coverImg.src = book.coverImage || './Images/default-book-cover.jpg';
         coverImg.alt = book.name;
     }
-    
-    const titleElement = document.querySelector(".book-title");
+
+    const titleElement = document.querySelector('.book-title');
     if (titleElement) {
         titleElement.textContent = book.name;
     }
-    
-    const categoryText = document.querySelector("#category .info-text");
+
+    const categoryText = document.querySelector('#category .info-text');
     if (categoryText) {
         categoryText.innerHTML = `<strong>${book.category}</strong>`;
     }
-    
-    const authorText = document.querySelector("#author .info-text");
+
+    const authorText = document.querySelector('#author .info-text');
     if (authorText) {
         authorText.innerHTML = `<strong>${book.author}</strong>`;
     }
-    
-    const descriptionText = document.querySelector("#description .info-text");
+
+    const descriptionText = document.querySelector('#description .info-text');
     if (descriptionText) {
-        descriptionText.innerHTML = book.description || "No description available.";
+        descriptionText.innerHTML = book.description || 'No description available.';
     }
-    
-    const statusBadge = document.querySelector(".status-badge");
+
+    const statusBadge = document.querySelector('.status-badge');
     if (statusBadge) {
-        if (book.status === "available") {
-            statusBadge.textContent = "Available";
-            statusBadge.style.backgroundColor = "#2d4a2d";
-            statusBadge.style.color = "#7ddf7d";
-            statusBadge.style.border = "1px solid #3d7a3d";
+        if (book.status === 'available') {
+            statusBadge.textContent = 'Available';
+            statusBadge.style.backgroundColor = '#2d4a2d';
+            statusBadge.style.color = '#7ddf7d';
+            statusBadge.style.border = '1px solid #3d7a3d';
         } else {
-            statusBadge.textContent = "Borrowed";
-            statusBadge.style.backgroundColor = "#5a3d1c";
-            statusBadge.style.color = "#e8b84c";
-            statusBadge.style.border = "1px solid #b8862d";
+            statusBadge.textContent = 'Borrowed';
+            statusBadge.style.backgroundColor = '#5a3d1c';
+            statusBadge.style.color = '#e8b84c';
+            statusBadge.style.border = '1px solid #b8862d';
         }
     }
 }
 
 function setupBorrowButton(book) {
-    const borrowBtn = document.querySelector(".borrow-btn");
-    const statusBadge = document.querySelector(".status-badge");
+    const borrowBtn = document.querySelector('.borrow-btn');
+    const statusBadge = document.querySelector('.status-badge');
     const role = (typeof window !== 'undefined' && window.SERVER_ROLE) ? window.SERVER_ROLE : '';
     const isAuthenticated = (typeof window !== 'undefined' && window.IS_AUTHENTICATED) ? window.IS_AUTHENTICATED : false;
-    
+
     if (!borrowBtn) return;
 
-    if (role === "admin") {
-        const bookFooter = document.querySelector(".book-footer");
+    if (role === 'admin') {
+        const bookFooter = document.querySelector('.book-footer');
         if (bookFooter) {
             borrowBtn.remove();
 
-            const deleteBtn = document.createElement("button");
-            deleteBtn.className = "borrow-btn";
-            deleteBtn.type = "button";
-            deleteBtn.textContent = "Delete";
-            deleteBtn.onclick = function () {
-                const books = JSON.parse(localStorage.getItem("books")) || [];
-                const index = books.findIndex(currentBook => currentBook.id == book.id);
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'borrow-btn';
+            deleteBtn.type = 'button';
+            deleteBtn.textContent = 'Delete';
+            deleteBtn.onclick = async function () {
+                const confirmed = confirm(`Are you sure you want to delete "${book.name}"?`);
+                if (!confirmed) {
+                    return;
+                }
 
-                if (index !== -1) {
-                    deleteBook(index);
-                    window.location.href = "/core/books/";
+                try {
+                    const response = await fetch(`/core/api/books/${book.id}/delete/`, {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        headers: {
+                            'X-CSRFToken': getCSRFToken(),
+                            'Accept': 'application/json',
+                        },
+                    });
+
+                    if (!response.ok) {
+                        const error = await response.json();
+                        throw new Error(error.error || 'Delete failed');
+                    }
+
+                    window.location.href = '/core/books/';
+                } catch (err) {
+                    alert(err.message || 'Unable to delete the book.');
                 }
             };
 
-            const editBtn = document.createElement("button");
-            editBtn.className = "borrow-btn";
-            editBtn.type = "button";
-            editBtn.textContent = "Edit";
+            const editBtn = document.createElement('button');
+            editBtn.className = 'borrow-btn';
+            editBtn.type = 'button';
+            editBtn.textContent = 'Edit';
             editBtn.onclick = function () {
                 window.location.href = `/core/edit_book/?id=${book.id}`;
             };
@@ -311,93 +369,95 @@ function setupBorrowButton(book) {
         }
         return;
     }
-    
-    if (book.status === "borrowed") {
+
+    if (book.status === 'borrowed') {
         borrowBtn.disabled = true;
-        borrowBtn.textContent = "Borrowed";
-        borrowBtn.style.backgroundColor = "#555";
-        borrowBtn.style.color = "#999";
-        borrowBtn.style.cursor = "not-allowed";
-        borrowBtn.style.boxShadow = "none";
-        borrowBtn.style.opacity = "0.7";
+        borrowBtn.textContent = 'Borrowed';
+        borrowBtn.style.backgroundColor = '#555';
+        borrowBtn.style.color = '#999';
+        borrowBtn.style.cursor = 'not-allowed';
+        borrowBtn.style.boxShadow = 'none';
+        borrowBtn.style.opacity = '0.7';
         return;
     }
-    
+
     if (!isAuthenticated) {
-        borrowBtn.addEventListener("click", function(e) {
+        borrowBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            alert("Please sign in to borrow books.");
-            window.location.href = "/core/login/";
+            alert('Please sign in to borrow books.');
+            window.location.href = '/core/login/';
         });
         return;
     }
-    
-    borrowBtn.addEventListener("click", function() {
-        
+
+    borrowBtn.addEventListener('click', async function() {
         const confirmBorrow = confirm(`Do you want to borrow "${book.name}"?`);
-        
-        if (confirmBorrow) {
-            statusBadge.textContent = "Borrowed";
-            statusBadge.style.backgroundColor = "#5a3d1c";
-            statusBadge.style.color = "#e8b84c";
-            statusBadge.style.border = "1px solid #b8862d";
-            
-            borrowBtn.disabled = true;
-            borrowBtn.textContent = "Borrowed";
-            borrowBtn.style.backgroundColor = "#555";
-            borrowBtn.style.color = "#999";
-            borrowBtn.style.cursor = "not-allowed";
-            borrowBtn.style.boxShadow = "none";
-            borrowBtn.style.opacity = "0.7";
-            
-            const books = JSON.parse(localStorage.getItem("books")) || [];
-            const bookIndex = books.findIndex(b => b.id == book.id);
-            
-            if (bookIndex !== -1) {
-                books[bookIndex].status = "borrowed";
-                localStorage.setItem("books", JSON.stringify(books));
+        if (!confirmBorrow) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/core/api/books/${book.id}/borrow/`, {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'X-CSRFToken': getCSRFToken(),
+                    'Accept': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Unable to borrow book');
             }
-            
-            const borrowed = JSON.parse(localStorage.getItem("borrowedBooks") || "{}");
-            borrowed[book.id] = "borrowed";
-            localStorage.setItem("borrowedBooks", JSON.stringify(borrowed));
-            
+
+            statusBadge.textContent = 'Borrowed';
+            statusBadge.style.backgroundColor = '#5a3d1c';
+            statusBadge.style.color = '#e8b84c';
+            statusBadge.style.border = '1px solid #b8862d';
+
+            borrowBtn.disabled = true;
+            borrowBtn.textContent = 'Borrowed';
+            borrowBtn.style.backgroundColor = '#555';
+            borrowBtn.style.color = '#999';
+            borrowBtn.style.cursor = 'not-allowed';
+            borrowBtn.style.boxShadow = 'none';
+            borrowBtn.style.opacity = '0.7';
+
             alert(`You have successfully borrowed "${book.name}"!`);
+        } catch (err) {
+            alert(err.message || 'Unable to borrow the book.');
         }
     });
 }
 
-function deleteBook(index) {
-    let books = JSON.parse(localStorage.getItem("books")) || [];
-
-    const confirmed = confirm(`Are you sure you want to delete "${books[index].name}"?`);
-    if (!confirmed) {
-        return;
-    }
-
-    books.splice(index, 1);
-    localStorage.setItem("books", JSON.stringify(books));
-
-    alert("Book deleted successfully.");
-    displayBooks();
-}
-
 // MY BOOKS PAGE 
 
-function initializeMyBooksPage() {
-    const booksList = document.getElementById("myBooksList");
-    
+async function initializeMyBooksPage() {
+    const booksList = document.getElementById('myBooksList');
     if (!booksList) return;
-    
-    const borrowed = JSON.parse(localStorage.getItem("borrowedBooks") || "{}");
-    const books = JSON.parse(localStorage.getItem("books")) || [];
-    
-    const borrowedBooks = books.filter(book => {
-        return (borrowed[book.id] === "borrowed" || book.status === "borrowed");
-    });
-    
-    booksList.innerHTML = "";
-    
+
+    let borrowedBooks = [];
+    try {
+        const response = await fetch('/core/api/my_books/', {
+            method: 'GET',
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error('Unable to load borrowed books');
+        }
+        const data = await response.json();
+        borrowedBooks = data.books || [];
+    } catch (error) {
+        borrowedBooks = [];
+    }
+
+    booksList.innerHTML = '';
+
     if (borrowedBooks.length === 0) {
         booksList.innerHTML = `
             <li style="text-align: center; color: #c0c0c0; padding: 40px; list-style: none;">
@@ -406,15 +466,14 @@ function initializeMyBooksPage() {
         `;
         return;
     }
-    
+
     borrowedBooks.forEach(book => {
-        const coverImage = book.coverImage || "./Images/default-book-cover.jpg";
-        
-        const listItem = document.createElement("li");
-        listItem.className = "book-card";
-        listItem.style.cursor = "pointer";
+        const coverImage = book.coverImage || './Images/default-book-cover.jpg';
+        const listItem = document.createElement('li');
+        listItem.className = 'book-card';
+        listItem.style.cursor = 'pointer';
         listItem.onclick = () => window.location.href = `/core/book_details/?id=${book.id}`;
-        
+
         listItem.innerHTML = `
             <img class="book-cover" src="${coverImage}" alt="${book.name}" 
                  onerror="this.src='./Images/default-book-cover.jpg'">
