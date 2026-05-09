@@ -147,25 +147,7 @@ async function searchBooks(event) {
         return;
     }
 
-    // Use cached books from the last displayBooks() call, or fetch if not cached
-    let books = window.BOOKIFY_CACHED_BOOKS || [];
-    if (books.length === 0) {
-        try {
-            const response = await fetch('/core/api/books/', {
-                method: 'GET',
-                credentials: 'same-origin',
-                headers: {
-                    'Accept': 'application/json',
-                },
-            });
-            if (response.ok) {
-                const data = await response.json();
-                books = data.books || [];
-            }
-        } catch (error) {
-            books = [];
-        }
-    }
+    let books = JSON.parse(localStorage.getItem("books")) || [];
 
     const filtered = books.filter(book =>
         book.name.toLowerCase().includes(query) ||
