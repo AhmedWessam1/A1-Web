@@ -1,6 +1,10 @@
-from django.shortcuts import redirect, render
+import json
+
+from django.http import JsonResponse, HttpResponseNotAllowed
+from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.hashers import make_password, check_password
-from .models import User
+
+from .models import User, Book
 
 # Create your views here.
 
@@ -16,6 +20,31 @@ def get_role(request):
 
 def is_user_authenticated(request):
     return bool(request.session.get('user_id'))
+
+
+def get_current_user(request):
+    user_id = request.session.get('user_id')
+    if not user_id:
+        return None
+
+    return User.objects.filter(id=user_id).first()
+
+
+def format_book(book):
+    return {
+        'id': book.id,
+        'name': book.name,
+        'author': book.author,
+        'category': book.category,
+        'description': book.description,
+        'status': book.status,
+        'coverImage': book.cover_image or '',
+    }
+
+
+def serialize_books(queryset):
+    return json.dumps([format_book(book) for book in queryset], ensure_ascii=False)
+
 
 def signup_page(request):
     error = None
@@ -65,23 +94,143 @@ def login_page(request):
     return render(request, 'login.html', {'error': error, 'role': get_role(request), 'is_authenticated': is_user_authenticated(request)})
 
 def home(request):
-    return render(request, 'home.html', {'role': get_role(request), 'is_authenticated': is_user_authenticated(request)})
+    books_json = serialize_books(Book.objects.all())
+    return render(
+        request,
+        'home.html',
+        {
+            'role': get_role(request),
+            'is_authenticated': is_user_authenticated(request),
+            'books_json': books_json,
+        },
+    )
+
 
 def logout_user(request):
     request.session.flush()
     return redirect('login')
 
-def add_book_page(request):
-    return render(request, 'add_book.html', {'role': get_role(request), 'is_authenticated': is_user_authenticated(request)})
 
+def add_book_page(request):
+    return render(
+        request,
+        'add_book.html',
+        {
+            'role': get_role(request),
+            'is_authenticated': is_user_authenticated(request),
+        },
+    )
+
+
+
+# Book Details View
 def book_details_page(request):
-    return render(request, 'book_details.html', {'role': get_role(request), 'is_authenticated': is_user_authenticated(request)})
+    return render(
+        request,
+        'book_details.html',
+        {
+            'role': get_role(request),
+            'is_authenticated': is_user_authenticated(request),
+        },
+    )
+
 
 def books_page(request):
-    return render(request, 'books.html', {'role': get_role(request), 'is_authenticated': is_user_authenticated(request)})
+    books_json = serialize_books(Book.objects.all())
+    return render(
+        request,
+        'books.html',
+        {
+            'role': get_role(request),
+            'is_authenticated': is_user_authenticated(request),
+            'books_json': books_json,
+        },
+    )
+
 
 def edit_book_page(request):
-    return render(request, 'edit_book.html', {'role': get_role(request), 'is_authenticated': is_user_authenticated(request)})
+    books_json = serialize_books(Book.objects.all())
+    return render(
+        request,
+        'edit_book.html',
+        {
+            'role': get_role(request),
+            'is_authenticated': is_user_authenticated(request),
+            'books_json': books_json,
+        },
+    )
 
+
+
+# My Books View
 def my_books_page(request):
-    return render(request, 'my_books.html', {'role': get_role(request), 'is_authenticated': is_user_authenticated(request)})
+    return render(
+        request,
+        'my_books.html',
+        {
+            'role': get_role(request),
+            'is_authenticated': is_user_authenticated(request),
+        },
+    )
+
+
+def api_books_list(request):
+    if request.method != 'GET':
+        return HttpResponseNotAllowed(['GET'])
+
+    books = [format_book(book) for book in Book.objects.all()]
+    return JsonResponse({'books': books})
+
+
+def api_book_detail(request, book_id):
+    if request.method != 'GET':
+        return HttpResponseNotAllowed(['GET'])
+
+    book = get_object_or_404(Book, id=book_id)
+    return JsonResponse({'book': format_book(book)})
+
+
+def api_borrow_book(request, book_id):
+    if request.method != 'POST':
+        return HttpResponseNotAllowed(['POST'])
+
+    if not is_user_authenticated(request):
+        return JsonResponse({'error': 'Authentication required.'}, status=401)
+
+    book = get_object_or_404(Book, id=book_id)
+    if book.status == Book.STATUS_BORROWED:
+        return JsonResponse({'error': 'Book is already borrowed.'}, status=400)
+
+    current_user = get_current_user(request)
+    if not current_user:
+        return JsonResponse({'error': 'Authentication required.'}, status=401)
+
+    book.status = Book.STATUS_BORROWED
+    book.borrower = current_user
+    book.save()
+    return JsonResponse({'book': format_book(book)})
+
+
+def api_delete_book(request, book_id):
+    if request.method != 'POST':
+        return HttpResponseNotAllowed(['POST'])
+
+    current_user = get_current_user(request)
+    if not current_user or current_user.role != 'admin':
+        return JsonResponse({'error': 'Admin access required.'}, status=403)
+
+    book = get_object_or_404(Book, id=book_id)
+    book.delete()
+    return JsonResponse({'success': True})
+
+
+def api_my_books(request):
+    if request.method != 'GET':
+        return HttpResponseNotAllowed(['GET'])
+
+    current_user = get_current_user(request)
+    if not current_user:
+        return JsonResponse({'books': []})
+
+    books = [format_book(book) for book in Book.objects.filter(borrower=current_user)]
+    return JsonResponse({'books': books})
