@@ -179,7 +179,10 @@ def api_books_list(request):
         return HttpResponseNotAllowed(['GET'])
 
     books = [format_book(book) for book in Book.objects.all()]
-    return JsonResponse({'books': books})
+    return JsonResponse({
+    'books': books,
+    'is_admin': get_role(request) == 'admin'
+})
 
 
 def api_book_detail(request, book_id):
