@@ -11,7 +11,7 @@
     <script src="{% static 'js/app.js' %}" defer></script>
     <script>
         window.SERVER_ROLE = "{{ role|default:'' }}";
-        window.IS_AUTHENTICATED = {{ is_authenticated|lower }};
+        window.IS_AUTHENTICATED = "{{ is_authenticated|lower }}";
     </script>
 </head>
 <body>
