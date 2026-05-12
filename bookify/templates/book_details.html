@@ -56,7 +56,12 @@
 
                     <div class="book-footer">
                         <span class="status-badge">Available</span>
-                        <button class="borrow-btn" type="button">Borrow</button>
+                        {% if role == 'admin' %}
+                            <button class="borrow-btn" data-action="edit" type="button" onclick="goToEdit(new URLSearchParams(window.location.search).get('id'))">Edit</button>
+                            <button class="borrow-btn" data-action="delete" type="button" onclick="deleteBook(new URLSearchParams(window.location.search).get('id'))">Delete</button>
+                        {% else %}
+                            <button class="borrow-btn" data-action="borrow" type="button">Borrow</button>
+                        {% endif %}
                     </div>
 
                 </div>

@@ -273,6 +273,9 @@ def api_borrow_book(request, book_id):
     if not current_user:
         return JsonResponse({'error': 'Authentication required.'}, status=401)
 
+    if current_user.role == 'admin':
+        return JsonResponse({'error': 'Admins cannot borrow books.'}, status=403)
+
     book.status = Book.STATUS_BORROWED
     book.borrower = current_user
     book.save()

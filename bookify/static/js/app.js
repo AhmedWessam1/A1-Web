@@ -77,18 +77,6 @@ container.innerHTML = books.map(book => `
             onclick="goToDetails(${book.id})">
             View Details
         </button>
-
-       ${window.IS_ADMIN ? `
-    <button class="edit-btn"
-        onclick="goToEdit(${book.id})">
-        Edit
-    </button>
-
-    <button class="delete-btn"
-        onclick="deleteBook(${book.id})">
-        Delete
-    </button>
-` : ''}
     </div>
     `).join('');
 }
@@ -133,7 +121,13 @@ async function deleteBook(id) {
 
         alert("Book Deleted ✅");
 
-        displayBooks();
+        const container = document.getElementById("booksContainer");
+
+        if (container) {
+            displayBooks();
+        } else {
+            window.location.href = "/core/books/";
+        }
 
     } catch (err) {
 
@@ -418,7 +412,9 @@ async function initializeBookDetailsPage() {
 
 function setupBorrowButton(book) {
 
-    const btn = document.querySelector(".borrow-btn");
+    const btn = document.querySelector(
+        ".borrow-btn[data-action='borrow'], .borrow-btn:not([data-action])"
+    );
 
     if (!btn) return;
 
