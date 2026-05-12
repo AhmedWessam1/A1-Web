@@ -232,22 +232,48 @@ async function initializeBookDetailsPage() {
             },
         });
 
-        if (!response.ok) {
-            throw new Error('Book not found');
+        if (response.ok) {
+            const data = await response.json();
+            const book = data.book;
+
+            if (!book) {
+                throw new Error('Book not found');
+            }
+
+            populateBookDetails(book);
+            setupBorrowButton(book);
+            return;
         }
-
-        const data = await response.json();
-        const book = data.book;
-
-        if (!book) {
-            throw new Error('Book not found');
-        }
-
-        populateBookDetails(book);
-        setupBorrowButton(book);
     } catch (error) {
-        window.location.href = '/core/books/';
+        // Fall through to localStorage fallback
     }
+
+    const localBook = getLocalBookById(bookId);
+    if (localBook) {
+        localBook.__source = 'local';
+        populateBookDetails(localBook);
+        setupBorrowButton(localBook);
+        return;
+    }
+
+    window.location.href = '/core/books/';
+}
+
+function getLocalBooksSafe() {
+    try {
+        return JSON.parse(localStorage.getItem('books')) || [];
+    } catch {
+        return [];
+    }
+}
+
+function setLocalBooksSafe(books) {
+    localStorage.setItem('books', JSON.stringify(Array.isArray(books) ? books : []));
+}
+
+function getLocalBookById(bookId) {
+    const books = getLocalBooksSafe();
+    return books.find(b => String(b.id) === String(bookId)) || null;
 }
 
 function populateBookDetails(book) {
@@ -299,6 +325,7 @@ function setupBorrowButton(book) {
     const statusBadge = document.querySelector('.status-badge');
     const role = (typeof window !== 'undefined' && window.SERVER_ROLE) ? window.SERVER_ROLE : '';
     const isAuthenticated = (typeof window !== 'undefined' && window.IS_AUTHENTICATED) ? window.IS_AUTHENTICATED : false;
+    const isLocalOnly = book && book.__source === 'local';
 
     if (!borrowBtn) return;
 
@@ -318,6 +345,14 @@ function setupBorrowButton(book) {
                 }
 
                 try {
+                    if (isLocalOnly) {
+                        const books = getLocalBooksSafe();
+                        const remaining = books.filter(b => String(b.id) !== String(book.id));
+                        setLocalBooksSafe(remaining);
+                        window.location.href = '/core/books/';
+                        return;
+                    }
+
                     const response = await fetch(`/core/api/books/${book.id}/delete/`, {
                         method: 'POST',
                         credentials: 'same-origin',
@@ -379,18 +414,31 @@ function setupBorrowButton(book) {
         }
 
         try {
-            const response = await fetch(`/core/api/books/${book.id}/borrow/`, {
-                method: 'POST',
-                credentials: 'same-origin',
-                headers: {
-                    'X-CSRFToken': getCSRFToken(),
-                    'Accept': 'application/json',
-                },
-            });
+            if (isLocalOnly) {
+                const books = getLocalBooksSafe();
+                const index = books.findIndex(b => String(b.id) === String(book.id));
+                if (index === -1) {
+                    throw new Error('Book not found');
+                }
+                if (books[index].status === 'borrowed') {
+                    throw new Error('Book is already borrowed.');
+                }
+                books[index].status = 'borrowed';
+                setLocalBooksSafe(books);
+            } else {
+                const response = await fetch(`/core/api/books/${book.id}/borrow/`, {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        'X-CSRFToken': getCSRFToken(),
+                        'Accept': 'application/json',
+                    },
+                });
 
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.error || 'Unable to borrow book');
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Unable to borrow book');
+                }
             }
 
             statusBadge.textContent = 'Borrowed';
