@@ -34,12 +34,15 @@ async function fetchAllBooks() {
         throw new Error('Failed to fetch books');
     }
 
-    const data = await response.json();
+   const data = await response.json();
 
-    return data.books || [];
+window.IS_ADMIN = data.is_admin;
+
+return data.books || [];
 }
 
 // RENDER BOOKS 
+
 
 function renderBooks(container, books) {
 
@@ -53,32 +56,40 @@ function renderBooks(container, books) {
         `;
         return;
     }
+container.innerHTML = books.map(book => `
+    <div class="book-card">
 
-    container.innerHTML = books.map(book => `
-        <div class="book-card">
+        <h3>${book.name}</h3>
 
-            <h3>${book.name}</h3>
+        <p>${book.author}</p>
 
-            <p>${book.author}</p>
+        <p>${book.category}</p>
 
-            <p>${book.category}</p>
+        <span class="badge ${book.status === 'available'
+            ? 'available'
+            : 'not-available'}">
 
-            <span class="badge ${book.status === 'available'
-                ? 'available'
-                : 'not-available'}">
+            ${book.status}
 
-                ${book.status}
+        </span>
 
-            </span>
+        <button class="details-btn"
+            onclick="goToDetails(${book.id})">
+            View Details
+        </button>
 
-            <button class="details-btn"
-                onclick="goToDetails(${book.id})">
+       ${window.IS_ADMIN ? `
+    <button class="edit-btn"
+        onclick="goToEdit(${book.id})">
+        Edit
+    </button>
 
-                View Details
-
-            </button>
-
-        </div>
+    <button class="delete-btn"
+        onclick="deleteBook(${book.id})">
+        Delete
+    </button>
+` : ''}
+    </div>
     `).join('');
 }
 
@@ -88,6 +99,47 @@ function goToDetails(id) {
     window.location.href = `/core/book_details/?id=${id}`;
 }
 
+function goToEdit(id) {
+    window.location.href = `/core/edit_book/?id=${id}`;
+}
+
+async function deleteBook(id) {
+
+    const confirmDelete = confirm("Delete this book?");
+
+    if (!confirmDelete) return;
+
+    try {
+
+        const response = await fetch(
+            `/core/api/books/${id}/delete/`,
+            {
+                method: "POST",
+
+                credentials: "same-origin",
+
+                headers: {
+                    "X-CSRFToken": getCSRFToken(),
+                    Accept: "application/json"
+                }
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error);
+        }
+
+        alert("Book Deleted ✅");
+
+        displayBooks();
+
+    } catch (err) {
+
+        alert(err.message);
+    }
+}
 // BOOKS PAGE 
 
 let allBooks = [];
