@@ -190,6 +190,71 @@ def api_book_detail(request, book_id):
     return JsonResponse({'book': format_book(book)})
 
 
+def api_add_book(request):
+    if request.method != 'POST':
+        return HttpResponseNotAllowed(['POST'])
+
+    current_user = get_current_user(request)
+    if not current_user or current_user.role != 'admin':
+        return JsonResponse({'error': 'Admin access required.'}, status=403)
+
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON.'}, status=400)
+
+    name = data.get('name', '').strip()
+    author = data.get('author', '').strip()
+    category = data.get('category', '').strip()
+    description = data.get('description', '').strip()
+    cover_image = data.get('coverImage', '').strip()
+
+    if not name or not author or not category:
+        return JsonResponse({'error': 'Name, author, and category are required.'}, status=400)
+
+    book = Book.objects.create(
+        name=name,
+        author=author,
+        category=category,
+        description=description,
+        cover_image=cover_image or None,
+    )
+
+    return JsonResponse({'book': format_book(book)}, status=201)
+
+
+def api_edit_book(request, book_id):
+    if request.method != 'POST':
+        return HttpResponseNotAllowed(['POST'])
+
+    current_user = get_current_user(request)
+    if not current_user or current_user.role != 'admin':
+        return JsonResponse({'error': 'Admin access required.'}, status=403)
+
+    book = get_object_or_404(Book, id=book_id)
+
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON.'}, status=400)
+
+    name = data.get('name', '').strip()
+    author = data.get('author', '').strip()
+    category = data.get('category', '').strip()
+    description = data.get('description', '').strip()
+
+    if not name or not author or not category:
+        return JsonResponse({'error': 'Name, author, and category are required.'}, status=400)
+
+    book.name = name
+    book.author = author
+    book.category = category
+    book.description = description
+    book.save()
+
+    return JsonResponse({'book': format_book(book)})
+
+
 def api_borrow_book(request, book_id):
     if request.method != 'POST':
         return HttpResponseNotAllowed(['POST'])
@@ -234,3 +299,7 @@ def api_my_books(request):
 
     books = [format_book(book) for book in Book.objects.filter(borrower=current_user)]
     return JsonResponse({'books': books})
+
+
+
+
