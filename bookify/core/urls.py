@@ -31,8 +31,11 @@ urlpatterns = [
     path('api/books/<int:book_id>/delete/', views.api_delete_book, name='api_delete_book'),
     
     path('api/my_books/', views.api_my_books, name='api_my_books'),
-     path('api/books/add/', views.api_add_book, name='api_add_book'),
-     path('api/books/<int:book_id>/edit/', views.api_edit_book, name='api_edit_book'),
+    path('api/books/add/', views.api_add_book, name='api_add_book'),
+    path('api/books/<int:book_id>/edit/', views.api_edit_book, name='api_edit_book'),
+    path('unborrow/<int:book_id>/', views.api_unborrow_book, name='api_unborrow_book'),
+    path('api/v2/books/<int:book_id>/', views.api_book_detail_v2, name='api_book_detail_v2'),
+
 ]
 
 
