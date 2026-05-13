@@ -440,16 +440,12 @@ function setupBorrowButton(book) {
     returnBtn.style.opacity = isAvailable ? '0.4' : '1';
     returnBtn.style.cursor = isAvailable ? 'not-allowed' : 'pointer';
 
-<<<<<<< HEAD
-        // Some browsers block window.open() after an async boundary (await).
-        // Pre-open the window synchronously on click to keep it user-initiated.
-        const pdfUrlHint = book?.pdfUrl;
-        const downloadWindow = pdfUrlHint ? window.open("", "_blank") : null;
-
-=======
     borrowBtn.onclick = async () => {
         if (borrowBtn.disabled) return;
->>>>>>> 8f8dcbc (edit return button)
+    // Some browsers block window.open() after an async boundary (await).
+    // Pre-open the window synchronously on click to keep it user-initiated.
+    const pdfUrlHint = book?.pdfUrl;
+    const downloadWindow = pdfUrlHint ? window.open("", "_blank") : null;
         try {
             const response = await fetch(`/core/api/books/${book.id}/borrow/`, {
                 method: 'POST',
@@ -460,7 +456,6 @@ function setupBorrowButton(book) {
                 }
             });
             const data = await response.json();
-<<<<<<< HEAD
 
             if (!response.ok) {
                 throw new Error(data.error);
@@ -482,20 +477,13 @@ function setupBorrowButton(book) {
 
             alert("Book Borrowed ✅  —  Your PDF download has started!");
 
-=======
-            if (!response.ok) throw new Error(data.error);
-            alert("Book Borrowed ✅");
->>>>>>> 8f8dcbc (edit return button)
             location.reload();
         } catch (err) {
-<<<<<<< HEAD
 
             if (downloadWindow) {
                 downloadWindow.close();
             }
 
-=======
->>>>>>> 8f8dcbc (edit return button)
             alert(err.message || "Borrow failed");
         }
     };

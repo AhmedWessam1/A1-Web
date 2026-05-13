@@ -34,10 +34,6 @@ class Book(models.Model):
     pdf_file = models.FileField(upload_to='pdfs/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-class BorrowedBook(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    book = models.ForeignKey(Book, on_delete=models.CASCADE)
-    borrowed_at = models.DateTimeField(auto_now_add=True)
-    is_returned = models.BooleanField(default=False) 
+
     def __str__(self):
         return f"{self.user.username} borrowed {self.book.name}"
