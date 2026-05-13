@@ -526,7 +526,6 @@ async function initializeMyBooksPage() {
     }
 }
 
-// ROUTER
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -559,12 +558,13 @@ document.addEventListener("DOMContentLoaded", () => {
         initializeEditBookPage();
     }
 });
+
+
 document.addEventListener("DOMContentLoaded", function() {
     const urlParams = new URLSearchParams(window.location.search);
     const bookId = urlParams.get('id');
     const currentUserId = window.CURRENT_USER_ID; 
 
-    // دالة لاستخراج توكن الحماية الخاص بـ Django من المتصفح
     function getCsrfToken() {
         let cookieValue = null;
         if (document.cookie && document.cookie !== '') {
@@ -581,7 +581,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     if (bookId) {
-        // استدعاء الـ API المطور الجديد لجلب تفاصيل الكتاب وحالة المستعير
         fetch(`/api/v2/books/${bookId}/`) 
             .then(response => response.json())
             .then(data => {
@@ -589,16 +588,13 @@ document.addEventListener("DOMContentLoaded", function() {
                 const footerContainer = document.querySelector('.book-footer');
                 const borrowBtn = document.querySelector('.borrow-btn[data-action="borrow"]');
                 
-                // التحقق: إذا كان الكتاب مستعاراً بواسطة هذا المستخدم الحالي
                 if (currentUserId && book.borrower_id == currentUserId) {
                     if (borrowBtn) {
-                        // 1. تعطيل زر Borrow الافتراضي وتغيير خصائصه ليكون مطفأً بالكامل
                         borrowBtn.disabled = true;
                         borrowBtn.innerText = "Borrowed";
                         borrowBtn.style.opacity = "0.5";
                         borrowBtn.style.cursor = "not-allowed";
 
-                        // 2. بناء زر الـ Unborrow المنور ووضعه بجانب الزر الأصلي ديناميكياً
                         const unborrowBtn = document.createElement('button');
                         unborrowBtn.className = 'borrow-btn';
                         unborrowBtn.style.backgroundColor = '#d9534f';
@@ -619,7 +615,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 .then(result => {
                                     if (result.success) {
                                         alert("Book returned successfully!");
-                                        window.location.reload(); // إعادة تحميل الصفحة لتحديث الأزرار للحالة الطبيعية
+                                        window.location.reload(); 
                                     } else {
                                         alert(result.error || "An error occurred.");
                                     }
@@ -634,3 +630,4 @@ document.addEventListener("DOMContentLoaded", function() {
             .catch(err => console.error("Error fetching book details:", err));
     }
 });
+
