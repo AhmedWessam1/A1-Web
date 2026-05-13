@@ -559,3 +559,78 @@ document.addEventListener("DOMContentLoaded", () => {
         initializeEditBookPage();
     }
 });
+document.addEventListener("DOMContentLoaded", function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const bookId = urlParams.get('id');
+    const currentUserId = window.CURRENT_USER_ID; 
+
+    // دالة لاستخراج توكن الحماية الخاص بـ Django من المتصفح
+    function getCsrfToken() {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, 10) === ('csrftoken=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(10));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    if (bookId) {
+        // استدعاء الـ API المطور الجديد لجلب تفاصيل الكتاب وحالة المستعير
+        fetch(`/api/v2/books/${bookId}/`) 
+            .then(response => response.json())
+            .then(data => {
+                const book = data.book;
+                const footerContainer = document.querySelector('.book-footer');
+                const borrowBtn = document.querySelector('.borrow-btn[data-action="borrow"]');
+                
+                // التحقق: إذا كان الكتاب مستعاراً بواسطة هذا المستخدم الحالي
+                if (currentUserId && book.borrower_id == currentUserId) {
+                    if (borrowBtn) {
+                        // 1. تعطيل زر Borrow الافتراضي وتغيير خصائصه ليكون مطفأً بالكامل
+                        borrowBtn.disabled = true;
+                        borrowBtn.innerText = "Borrowed";
+                        borrowBtn.style.opacity = "0.5";
+                        borrowBtn.style.cursor = "not-allowed";
+
+                        // 2. بناء زر الـ Unborrow المنور ووضعه بجانب الزر الأصلي ديناميكياً
+                        const unborrowBtn = document.createElement('button');
+                        unborrowBtn.className = 'borrow-btn';
+                        unborrowBtn.style.backgroundColor = '#d9534f';
+                        unborrowBtn.style.marginLeft = '10px';
+                        unborrowBtn.innerText = 'Unborrow';
+                        unborrowBtn.type = 'button';
+                        
+                        unborrowBtn.onclick = function() {
+                            if (confirm("Are you sure you want to return this book?")) {
+                                fetch(`/unborrow/${bookId}/`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'X-CSRFToken': getCsrfToken(),
+                                        'Content-Type': 'application/json'
+                                    }
+                                })
+                                .then(res => res.json())
+                                .then(result => {
+                                    if (result.success) {
+                                        alert("Book returned successfully!");
+                                        window.location.reload(); // إعادة تحميل الصفحة لتحديث الأزرار للحالة الطبيعية
+                                    } else {
+                                        alert(result.error || "An error occurred.");
+                                    }
+                                })
+                                .catch(err => console.error("Error during unborrow:", err));
+                            }
+                        };
+                        footerContainer.appendChild(unborrowBtn);
+                    }
+                }
+            })
+            .catch(err => console.error("Error fetching book details:", err));
+    }
+});
