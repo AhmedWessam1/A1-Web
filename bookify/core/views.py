@@ -4,7 +4,8 @@ from django.http import JsonResponse, HttpResponseNotAllowed
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.hashers import make_password, check_password
 
-from .models import User, Book
+from core.models import Book
+from core.models import User
 
 # Create your views here.
 
@@ -38,7 +39,7 @@ def format_book(book):
         'category': book.category,
         'description': book.description,
         'status': book.status,
-        'coverImage': book.cover_image or '',
+        'coverImage': book.cover_image.url if book.cover_image else None,
     }
 
 

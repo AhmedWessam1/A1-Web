@@ -34,15 +34,14 @@ async function fetchAllBooks() {
         throw new Error('Failed to fetch books');
     }
 
-   const data = await response.json();
+    const data = await response.json();
 
-window.IS_ADMIN = data.is_admin;
+    window.IS_ADMIN = data.is_admin;
 
-return data.books || [];
+    return data.books || [];
 }
 
 // RENDER BOOKS 
-
 
 function renderBooks(container, books) {
 
@@ -56,32 +55,33 @@ function renderBooks(container, books) {
         `;
         return;
     }
-container.innerHTML = books.map(book => `
-    <div class="book-card">
 
-        <h3>${book.name}</h3>
+    container.innerHTML = books.map(book => `
+        <div class="book-card">
 
-        <p>${book.author}</p>
+            <h3>${book.name}</h3>
 
-        <p>${book.category}</p>
+            <p>${book.author}</p>
 
-        <span class="badge ${book.status === 'available'
-            ? 'available'
-            : 'not-available'}">
+            <p>${book.category}</p>
 
-            ${book.status}
+            <span class="badge ${book.status === 'available'
+                ? 'available'
+                : 'not-available'}">
 
-        </span>
+                ${book.status}
 
-        <button class="details-btn"
-            onclick="goToDetails(${book.id})">
-            View Details
-        </button>
-    </div>
+            </span>
+
+            <button class="details-btn"
+                onclick="goToDetails(${book.id})">
+                View Details
+            </button>
+        </div>
     `).join('');
 }
 
-//NAVIGATION
+// NAVIGATION
 
 function goToDetails(id) {
     window.location.href = `/core/book_details/?id=${id}`;
@@ -134,6 +134,7 @@ async function deleteBook(id) {
         alert(err.message);
     }
 }
+
 // BOOKS PAGE 
 
 let allBooks = [];
@@ -381,6 +382,17 @@ async function initializeBookDetailsPage() {
         const data = await response.json();
 
         const book = data.book;
+
+        // Cover Image
+        const cover = document.getElementById("bookCover");
+        if (cover) {
+            if (book.coverImage) {
+                cover.src = book.coverImage;
+            } else {
+                cover.src = "/static/images/default-book-cover.jpg";
+            }
+            cover.alt = book.name;
+        }
 
         document.querySelector(".book-title").textContent = book.name;
 
