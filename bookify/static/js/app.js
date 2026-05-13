@@ -423,46 +423,44 @@ async function initializeBookDetailsPage() {
 // BORROW
 
 function setupBorrowButton(book) {
+    const borrowBtn = document.getElementById('borrowBtn');
+    const returnBtn = document.getElementById('returnBtn');
 
-    const btn = document.querySelector(
-        ".borrow-btn[data-action='borrow'], .borrow-btn:not([data-action])"
-    );
+    if (!borrowBtn || !returnBtn) return;
 
-    if (!btn) return;
+    const isAvailable = book.status === 'available';
 
-    if (book.status === "borrowed") {
+    // Borrow button
+    borrowBtn.disabled = !isAvailable;
+    borrowBtn.style.opacity = isAvailable ? '1' : '0.4';
+    borrowBtn.style.cursor = isAvailable ? 'pointer' : 'not-allowed';
 
-        btn.disabled = true;
+    // Return button
+    returnBtn.disabled = isAvailable;
+    returnBtn.style.opacity = isAvailable ? '0.4' : '1';
+    returnBtn.style.cursor = isAvailable ? 'not-allowed' : 'pointer';
 
-        btn.textContent = "Borrowed";
-
-        return;
-    }
-
-    btn.addEventListener("click", async () => {
-
+<<<<<<< HEAD
         // Some browsers block window.open() after an async boundary (await).
         // Pre-open the window synchronously on click to keep it user-initiated.
         const pdfUrlHint = book?.pdfUrl;
         const downloadWindow = pdfUrlHint ? window.open("", "_blank") : null;
 
+=======
+    borrowBtn.onclick = async () => {
+        if (borrowBtn.disabled) return;
+>>>>>>> 8f8dcbc (edit return button)
         try {
-
-            const response = await fetch(
-                `/core/api/books/${book.id}/borrow/`,
-                {
-                    method: 'POST',
-
-                    credentials: 'same-origin',
-
-                    headers: {
-                        'X-CSRFToken': getCSRFToken(),
-                        Accept: 'application/json'
-                    }
+            const response = await fetch(`/core/api/books/${book.id}/borrow/`, {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'X-CSRFToken': getCSRFToken(),
+                    Accept: 'application/json'
                 }
-            );
-
+            });
             const data = await response.json();
+<<<<<<< HEAD
 
             if (!response.ok) {
                 throw new Error(data.error);
@@ -484,17 +482,43 @@ function setupBorrowButton(book) {
 
             alert("Book Borrowed ✅  —  Your PDF download has started!");
 
+=======
+            if (!response.ok) throw new Error(data.error);
+            alert("Book Borrowed ✅");
+>>>>>>> 8f8dcbc (edit return button)
             location.reload();
-
         } catch (err) {
+<<<<<<< HEAD
 
             if (downloadWindow) {
                 downloadWindow.close();
             }
 
+=======
+>>>>>>> 8f8dcbc (edit return button)
             alert(err.message || "Borrow failed");
         }
-    });
+    };
+
+    returnBtn.onclick = async () => {
+        if (returnBtn.disabled) return;
+        try {
+            const response = await fetch(`/core/api/books/${book.id}/return/`, {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'X-CSRFToken': getCSRFToken(),
+                    Accept: 'application/json'
+                }
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error);
+            alert("Book Returned ✅");
+            window.location.href = "/core/my_books/";
+        } catch (err) {
+            alert(err.message || "Return failed");
+        }
+    };
 }
 
 // MY BOOKS
@@ -582,75 +606,4 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-
-document.addEventListener("DOMContentLoaded", function() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const bookId = urlParams.get('id');
-    const currentUserId = window.CURRENT_USER_ID; 
-
-    function getCsrfToken() {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, 10) === ('csrftoken=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(10));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-
-    if (bookId) {
-        fetch(`/api/v2/books/${bookId}/`) 
-            .then(response => response.json())
-            .then(data => {
-                const book = data.book;
-                const footerContainer = document.querySelector('.book-footer');
-                const borrowBtn = document.querySelector('.borrow-btn[data-action="borrow"]');
-                
-                if (currentUserId && book.borrower_id == currentUserId) {
-                    if (borrowBtn) {
-                        borrowBtn.disabled = true;
-                        borrowBtn.innerText = "Borrowed";
-                        borrowBtn.style.opacity = "0.5";
-                        borrowBtn.style.cursor = "not-allowed";
-
-                        const unborrowBtn = document.createElement('button');
-                        unborrowBtn.className = 'borrow-btn';
-                        unborrowBtn.style.backgroundColor = '#d9534f';
-                        unborrowBtn.style.marginLeft = '10px';
-                        unborrowBtn.innerText = 'Unborrow';
-                        unborrowBtn.type = 'button';
-                        
-                        unborrowBtn.onclick = function() {
-                            if (confirm("Are you sure you want to return this book?")) {
-                                fetch(`/unborrow/${bookId}/`, {
-                                    method: 'POST',
-                                    headers: {
-                                        'X-CSRFToken': getCsrfToken(),
-                                        'Content-Type': 'application/json'
-                                    }
-                                })
-                                .then(res => res.json())
-                                .then(result => {
-                                    if (result.success) {
-                                        alert("Book returned successfully!");
-                                        window.location.reload(); 
-                                    } else {
-                                        alert(result.error || "An error occurred.");
-                                    }
-                                })
-                                .catch(err => console.error("Error during unborrow:", err));
-                            }
-                        };
-                        footerContainer.appendChild(unborrowBtn);
-                    }
-                }
-            })
-            .catch(err => console.error("Error fetching book details:", err));
-    }
-});
 

@@ -62,8 +62,8 @@
                             <button class="borrow-btn" data-action="edit" type="button" onclick="goToEdit(new URLSearchParams(window.location.search).get('id'))">Edit</button>
                             <button class="borrow-btn" data-action="delete" type="button" onclick="deleteBook(new URLSearchParams(window.location.search).get('id'))">Delete</button>
                         {% else %}
-                            <button class="borrow-btn" data-action="borrow" type="button">Borrow</button>
-                        <button class="borrow-btn" data-action="unborrow" type="button" onclick="unborrowBook(new URLSearchParams(window.location.search).get('id'))">Unborrow</button>
+                            <button class="borrow-btn" id="borrowBtn" data-action="borrow" type="button">Borrow</button>
+                            <button class="borrow-btn" id="returnBtn" data-action="return" type="button">Return</button>
                         {% endif %}
                     </div>
 

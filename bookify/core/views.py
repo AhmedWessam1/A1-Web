@@ -344,3 +344,20 @@ def api_book_detail_v2(request, book_id):
     return JsonResponse({'book': format_book_with_borrower(book)})
 
 
+def api_return_book(request, book_id):
+    if request.method != 'POST':
+        return HttpResponseNotAllowed(['POST'])
+
+    if not is_user_authenticated(request):
+        return JsonResponse({'error': 'Authentication required.'}, status=401)
+
+    book = get_object_or_404(Book, id=book_id)
+    current_user = get_current_user(request)
+
+    if book.borrower != current_user:
+        return JsonResponse({'error': 'You did not borrow this book.'}, status=403)
+
+    book.status = Book.STATUS_AVAILABLE
+    book.borrower = None
+    book.save()
+    return JsonResponse({'book': format_book(book)})
