@@ -309,4 +309,37 @@ def api_my_books(request):
 
 
 
+def format_book_with_borrower(book):
+    data = format_book(book)  
+    data['borrower_id'] = book.borrower.id if book.borrower else None
+    return data
+
+def api_unborrow_book(request, book_id):
+    if request.method != 'POST':
+        return HttpResponseNotAllowed(['POST'])
+        
+    if not is_user_authenticated(request):
+        return JsonResponse({'error': 'Authentication required.'}, status=401)
+        
+    book = get_object_or_404(Book, id=book_id)
+    current_user = get_current_user(request)
+    
+    if not current_user:
+        return JsonResponse({'error': 'Authentication required.'}, status=401)
+        
+    if book.borrower != current_user:
+        return JsonResponse({'error': 'You cannot return a book you did not borrow.'}, status=403)
+        
+    book.status = 'available'  
+    book.borrower = None
+    book.save()
+    
+    return JsonResponse({'success': True, 'book': format_book_with_borrower(book)})
+
+def api_book_detail_v2(request, book_id):
+    if request.method != 'GET':
+        return HttpResponseNotAllowed(['GET'])
+    book = get_object_or_404(Book, id=book_id)
+    return JsonResponse({'book': format_book_with_borrower(book)})
+
 
