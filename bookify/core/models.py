@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import
 # Create your models here.
 class User(models.Model):
     username = models.CharField(max_length=100)
@@ -22,6 +22,7 @@ class Book(models.Model):
     category = models.CharField(max_length=100)
     description = models.TextField(blank=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=STATUS_AVAILABLE)
+
     borrower = models.ForeignKey(
         User,
         null=True,
@@ -32,6 +33,11 @@ class Book(models.Model):
     cover_image = models.ImageField(upload_to='covers/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
+class BorrowedBook(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    borrowed_at = models.DateTimeField(auto_now_add=True)
+    is_returned = models.BooleanField(default=False) 
     def __str__(self):
         return self.name
+        return f"{self.user.username} borrowed {self.book.title}
