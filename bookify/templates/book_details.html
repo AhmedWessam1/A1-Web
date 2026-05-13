@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{% static 'css/book-details.css' %}">
     <script src="{% static 'js/app.js' %}" defer></script>
     <script>
+        window.CURRENT_USER_ID = "{{ request.session.user_id|default:'' }}";
         window.SERVER_ROLE = "{{ role|default:'' }}";
         window.IS_AUTHENTICATED = "{{ is_authenticated|lower }}";
     </script>
