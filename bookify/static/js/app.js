@@ -463,7 +463,12 @@ function setupBorrowButton(book) {
                 throw new Error(data.error);
             }
 
-            alert("Book Borrowed ✅");
+            // Download the PDF
+            if (data.book.pdfUrl) {
+                window.open(data.book.pdfUrl, '_blank');
+            }
+
+            alert("Book Borrowed ✅  —  Your PDF download has started!");
 
             location.reload();
 

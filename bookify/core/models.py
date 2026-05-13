@@ -31,6 +31,7 @@ class Book(models.Model):
         related_name='borrowed_books'
     )
     cover_image = models.ImageField(upload_to='covers/', blank=True, null=True)
+    pdf_file = models.FileField(upload_to='pdfs/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 class BorrowedBook(models.Model):

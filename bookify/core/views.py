@@ -40,6 +40,7 @@ def format_book(book):
         'description': book.description,
         'status': book.status,
         'coverImage': book.cover_image.url if book.cover_image else None,
+        'pdfUrl': book.pdf_file.url if book.pdf_file else None,
     }
 
 
