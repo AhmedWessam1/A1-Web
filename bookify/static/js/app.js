@@ -26,7 +26,8 @@ async function fetchAllBooks() {
         method: 'GET',
         credentials: 'same-origin',
         headers: {
-            Accept: 'application/json'
+            Accept: 'application/json',
+            'Cache-Control': 'no-cache'
         }
     });
 
@@ -140,24 +141,14 @@ async function deleteBook(id) {
 let allBooks = [];
 
 async function displayBooks() {
-
     const container = document.getElementById("booksContainer");
-
     if (!container) return;
 
     try {
-
         allBooks = await fetchAllBooks();
-
         renderBooks(container, allBooks);
-
     } catch {
-
-        container.innerHTML = `
-            <p style="color:red">
-                Failed to load books
-            </p>
-        `;
+        container.innerHTML = `<p style="color:red">Failed to load books</p>`;
     }
 }
 
@@ -592,6 +583,12 @@ document.addEventListener("DOMContentLoaded", () => {
     if (path.includes("/core/edit_book")) {
         initializeEditBookPage();
     }
-});
 
+    window.addEventListener('pageshow', (event) => {
+        if (event.persisted) {
+            displayBooks();
+            displayHomeBooks();
+        }
+    });
+})
 
