@@ -433,10 +433,8 @@ function setupBorrowButton(book) {
 
     borrowBtn.onclick = async () => {
         if (borrowBtn.disabled) return;
-    // Some browsers block window.open() after an async boundary (await).
-    // Pre-open the window synchronously on click to keep it user-initiated.
-    const pdfUrlHint = book?.pdfUrl;
-    const downloadWindow = pdfUrlHint ? window.open("", "_blank") : null;
+
+        const downloadWindow = window.open("", "_blank");
         try {
             const response = await fetch(`/core/api/books/${book.id}/borrow/`, {
                 method: 'POST',
@@ -453,19 +451,10 @@ function setupBorrowButton(book) {
             }
 
             // Download the PDF
-            const pdfUrl = data?.book?.pdfUrl || pdfUrlHint;
+            const pdfUrl = data.book.pdfUrl;
             if (pdfUrl) {
-                if (downloadWindow) {
-                    downloadWindow.location.href = pdfUrl;
-                } else {
-                    // If pre-open was blocked, fall back to same-tab navigation.
-                    window.location.href = pdfUrl;
-                    return;
-                }
-            } else if (downloadWindow) {
-                downloadWindow.close();
+                downloadWindow.location.href = pdfUrl;
             }
-
             alert("Book Borrowed ✅  —  Your PDF download has started!");
 
             location.reload();
